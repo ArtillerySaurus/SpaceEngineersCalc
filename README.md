@@ -4,14 +4,15 @@ http://spaceengineerswiki.com/
 
 As I was building things, I often found myself lacking in reaching space.
 There are enough calculators but none which do what I'd want.
+The aim is to make a calculator capable of doing everything that I want it to do, making it the most complete calculator.
 
-This tool should be able to calculate:
-the amount of Hydrogen needed
-thrust needed
+This tool should be able to calculate thrust (acceleration and needed thrust) and consumption (hydrogen, oxygen, power).
 
 TODO:
 
+Power consumption.
 Grid sizes
+Acceleration
 Correct stats per item
 Calculations
 Gravity scaling
