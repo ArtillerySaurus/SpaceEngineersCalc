@@ -1,5 +1,32 @@
-body{}
+html, body {
+   height: 100%;
+}
+
 
 h1, h2{
     color: #0586b6;
+}
+
+.wrapper, .row {
+   height: 100%;
+   margin-left:0;
+   margin-right:0;
+}
+
+.wrapper:before, .wrapper:after,
+.column:before, .column:after {
+    content: "";
+    display: table;
+}
+
+.wrapper:after,
+.column:after {
+    clear: both;
+}
+
+#info-window {
+  background-color:#eee;
+  height:100%;
+  position:fixed;
+  right:0;
 }
