@@ -159,11 +159,15 @@ function calcTotalOxygenStorageDrain( playersConsumeSameAir, totalOxygenConsumpt
 
     }
 
-    // Enough farms for enough players? Check if there are players, else reverse it, how many players can live on this amount of farms?
-    if(totalOxygenProduction >= totalOxygenConsumption){
+    var consumptionTime = Math.round(totalOxygenStorage / totalOxygenConsumption);
 
-    }
+    var formattedTime = formatSecondsToHumanReadable(consumptionTime);
 
+    pushStat("Oxygen consumption time", formattedTime);
+
+}
+
+function calcOxygenFarmProduction(totalOxygenStorage){
 
 }
 
