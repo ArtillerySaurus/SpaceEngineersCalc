@@ -1,6 +1,25 @@
 var statList = [];
-// var questionCount = 3; // Used to calculate progress. If not used, get all fields, loop and find values.
 
+// Field values/user input.
+var playerCount;
+var gridSize;
+var oxygenTankAmount;
+var playerItemOxygenBottleAmount;
+var oxygenfarmAmount;
+var depresAirventAmount;
+var playersConsumeSameAir;
+
+// Game info taken via gameInfo.js.
+var oxygenTankStorage;
+var playerItemOxygenBottleStorage;
+var oxygenfarmProductionRate;
+var airventInput;
+
+// Totals.
+var totalOxygenStorage;
+var totalOxygenConsumption;
+var totalOxygenProduction;
+var totalAirventInput;
 
 // On document ready.
 $(document).ready(function(){
@@ -8,43 +27,83 @@ $(document).ready(function(){
     // Set onClick event.
     $('#calculate-stats').click(function(){
 
+        setBaseStats();
         calculateStats();
 
     });
 
-    // // Set multiple fields events.
-    // $('.playerCount').change(function(){
-    //
-    //     if(document.getElementById('autofillDuplicateFields').checked){
-    //
-    //         var oldVal = $(this).val();
-    //         $('.playerCount').val(oldVal);
-    //
-    //     }
-    // })
-    //
-    // // Set multiple fields events.
-    // $('.largeGridOxygenTank').change(function(){
-    //
-    //     if(document.getElementById('autofillDuplicateFields').checked){
-    //
-    //         var oldVal = $(this).val();
-    //         $('.largeGridOxygenTank').val(oldVal);
-    //
-    //     }
-    // })
+    // Set onClick event.
+    $('input[name="gridRadios"]').click(function(){
+
+        gridSize = $(this).val();
+
+        if(gridSize == "large"){
+
+            $('oxygenfarmAmount').prop("disabled",true);
+
+        }else{
+
+            //@TODO Enabling doesnt work...
+            $('oxygenfarmAmount').prop("disabled",false);
+            $('oxygenfarmAmount').removeAttr("disabled");
+
+        }
+
+    });
 
 });
 
+function setBaseStats(){
 
+    // Field values/user input.
+    playerCount                     = $('#playerCount').val();
+    gridSize                        = $('input[name="gridRadios"]:checked').val();
+    oxygenTankAmount                = $('#oxygenTankAmount').val();
+    playerItemOxygenBottleAmount    = $('#playerItemOxygenBottle').val();
+    oxygenfarmAmount                = $('#oxygenFarmAmount').val();
+    depresAirventAmount             = $('#airventsDepresurise').val();
+    playersConsumeSameAir           = document.getElementById('playersConsumeSameAirAsTanks').checked;
+
+    // Game info taken via gameInfo.js.
+    oxygenTankStorage               = partInfo.grids[gridSize].oxygenTank.storage;
+    playerItemOxygenBottleStorage   = partInfo.playerItems.oxygenBottle.storage;
+    oxygenfarmProductionRate        = partInfo.grids.large.oxygenFarm.production;
+    airventInput                    = partInfo.grids[gridSize].airvent.input;
+
+    // Total calculations.
+    totalOxygenStorage = (oxygenTankStorage * oxygenTankAmount);
+    totalOxygenStorage += (playerItemOxygenBottleStorage * playerItemOxygenBottleAmount);
+
+    totalOxygenConsumption = 0;
+
+    // If players breathe from the same system, correct calculations!
+    if(playersConsumeSameAir){
+        totalOxygenConsumption = playerOxygenConsumption * playerCount;
+    }
+
+    //@TODO Are oxygen bottles excluded from this? In the case of depres airvents?
+    //@TODO Take oxygen generation from the oxy-gen into consideration! Make this checkbox thingy tho.
+    totalOxygenProduction = oxygenfarmProductionRate * oxygenfarmAmount;
+
+    totalAirventInput = airventInput * depresAirventAmount;
+
+    pushStat("Oxy storage", totalOxygenStorage +" o2");
+    pushStat("Oxy consumption", totalOxygenConsumption +" o2/s");
+    pushStat("Oxy production", totalOxygenProduction +" o2/s");
+    pushStat("Depres airvent input", totalAirventInput +" o2/s");
+
+}
 
 function calculateStats(){
     // Call all functions in sequence.
 
     oxygenStats();
-    oxygenFarms();
-    deresurisingAirvents();
 
+    if(gridSize == "large"){
+        oxygenFarms();
+    }
+
+    depresurisingAirvents();
 
     buildStatList(); // Keep this as last.
     emptyStatList(); // Empty list.
@@ -53,22 +112,15 @@ function calculateStats(){
 
 function oxygenStats(){
 
-    var largeGridOxygenTankStorage      = partInfo.grids.large.oxygenTank.storage;
-    var smallGridOxygenTankStorage      = partInfo.grids.small.oxygenTank.storage;
-    var playerItemOxygenBottleStorage   = partInfo.playerItems.oxygenBottle.storage;
+    if(!playersConsumeSameAir){
 
-    var playerCount                     = $('#playerCount').val();
-    var largeGridOxygenTankAmount       = $('#largeGridOxygenTank').val();
-    var smallGridOxygenTankAmount       = $('#smallGridOxygenTank').val();
-    var playerItemOxygenBottleAmount    = $('#playerItemOxygenBottle').val();
+        pushStat("Oxygen consumption time", "No consumption no drain!");
 
-    // Calculations.
-    var totalConsumption    = playerOxygenConsumption * playerCount;
-    var totalStorage        = (largeGridOxygenTankStorage * largeGridOxygenTankAmount);
-    totalStorage            += (smallGridOxygenTankStorage * smallGridOxygenTankAmount);
-    totalStorage            += (playerItemOxygenBottleStorage * playerItemOxygenBottleAmount);
+        return false;
 
-    var consumptionTime = Math.round(totalStorage / totalConsumption);
+    }
+
+    var consumptionTime = Math.round(totalOxygenStorage / totalOxygenConsumption);
 
     var formattedTime = formatSecondsToHumanReadable(consumptionTime);
 
@@ -77,42 +129,30 @@ function oxygenStats(){
 }
 
 function oxygenFarms(){
-    var oxygenfarmProductionRate    = partInfo.grids.large.oxygenFarm.production;
-    var largeGridOxygenTankStorage  = partInfo.grids.large.oxygenTank.storage;
-
-    var playerCount                 = $('#playerCount').val();
-    var oxygenfarmAmount            = $('#oxygenFarmAmount').val();
-    var largeGridOxygenTankAmount   = $('#largeGridOxygenTank').val();
-
-    // Calculations.
-    var totalConsumption    = playerOxygenConsumption * playerCount;
-    var totalProduction     = oxygenfarmProductionRate * oxygenfarmAmount;
 
     // Enough farms for enough players? Check if there are players, else reverse it, how many players can live on this amount of farms?
-    if(totalProduction >= totalConsumption){
-
-        // pushStat("Oxygenfarm", "enough");
+    if(totalOxygenProduction >= totalOxygenConsumption){
 
         // Can tanks be filled?
-        var remainingOxygenGain = totalProduction - totalConsumption;
+        var remainingOxygenGain = totalOxygenProduction - totalOxygenConsumption;
+
+        console.log(remainingOxygenGain);
 
         if(remainingOxygenGain > 0){
 
             // How fast will tanks be filled?
-            //@TODO Are oxygen bottles excluded from this?
-            var totalStorage        = (largeGridOxygenTankStorage * largeGridOxygenTankAmount);
-            var totalFillingRate    = totalProduction;
+            var totalFillingRate = totalOxygenProduction;
 
             // Is the player breathing this air aswell? If so correct for this.
-            if(document.getElementById('playersConsumeSameAirAsTanks').checked){
-                totalFillingRate = totalProduction - totalConsumption;
+            if(playersConsumeSameAir){
+                totalFillingRate = totalOxygenProduction - totalOxygenConsumption;
             }
 
-            var fillingTime     = Math.round(totalStorage / totalFillingRate);
+            var fillingTime     = Math.round(totalOxygenStorage / totalFillingRate);
             var formattedTime   = formatSecondsToHumanReadable(fillingTime);
 
             // How many players can be sustained by these farms?
-            var totalSustainedPlayers = Math.floor(totalProduction / playerOxygenConsumption);
+            var totalSustainedPlayers = Math.floor(totalFillingRate / playerOxygenConsumption);
 
             pushStat("Oxygenfarms can sustain player count", playerCount +"/"+ totalSustainedPlayers);
 
@@ -122,44 +162,38 @@ function oxygenFarms(){
             pushStat("Farms tank fill time", "evened out, 0");
         }
 
-    }else{
+    }else if(playersConsumeSameAir){
 
         // How many farms are needed to fulfill player count requirements? % thingy?
-        var oxygenfarmsRequired = Math.ceil(totalConsumption / oxygenfarmProductionRate);
+        var oxygenfarmsRequired = Math.ceil(totalOxygenConsumption / totalOxygenProduction);
 
-        pushStat("Oxygenfarms", "Need more! ("+ oxygenfarmAmount +"/"+ oxygenfarmsRequired +")");
+        pushStat("Oxygenfarms", "need more! ("+ oxygenfarmAmount +"/"+ oxygenfarmsRequired +")");
 
     }
 }
 
-function deresurisingAirvents(){
-
-    var airventInput = partInfo.grids.large.airvent.input; // Airvents currently have the same input and output per grid.
-
-    var playerCount     = $('#playerCount').val();
-    var airventAmount   = $('#airventsDepresurise').val();
-
-    // Calculations.
-    var totalConsumption    = playerOxygenConsumption * playerCount;
-    var totalAirventInput   = airventInput * airventAmount;
-    var totalGain           = totalAirventInput - totalConsumption;
+function depresurisingAirvents(){
 
     // Calculat if its enough.
-    if(totalAirventInput > totalConsumption){
+    if(totalAirventInput > totalOxygenConsumption){
 
         // pushStat("Oxygen consumption time", formattedTime);
         var totalAirventsPlayerSustain = Math.floor(totalAirventInput / playerOxygenConsumption);
 
-        pushStat("Depres airvents can support you", airventAmount +"/"+ totalAirventsPlayerSustain +" players supported");
+        pushStat("Depres airvents", "enough "+ depresAirventAmount +"/"+ totalAirventsPlayerSustain +" players supported");
 
     }else{
 
         // Not enough!
         var airventsNeeded = Math.ceil(totalConsumption / airventInput);
 
-        pushStat("Airvents can't support you", airventAmount +"/"+ airventsNeeded);
+        pushStat("Depres airvents", "need more! "+ depresAirventAmount +"/"+ airventsNeeded);
 
     }
+
+}
+
+function oxygenGeneratorProduction(){
 
 }
 
