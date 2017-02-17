@@ -1,9 +1,8 @@
 var version = "";
 
 var gravity = 9.83;
-var playerOxygenConsumption = 0.063;
 
-var partInfo = {
+var gameInfo = {
     "grids": {
         "large": {
             "oxygenTank": {
@@ -25,11 +24,12 @@ var partInfo = {
                 "output": 300,
                 "input": 300
             }
-        }
-    },
-    "playerItems": {
-        "oxygenBottle": {
-            "storage": 100
+        },
+        "player": {
+            "oxygenConsumption": 0.063,
+            "oxygenBottle": {
+                "storage": 100
+            }
         }
     }
 };

@@ -1,12 +1,11 @@
 var statList = [];
-// var gridSize;
-
 
 // Field values/user input.
-var playerCount;
-var oxygenTankAmount;
-var playerItemOxygenBottleAmount;
-var oxygenfarmAmount;
+// var playerCount;
+// var gridSize;
+// var oxygenTankAmount;
+// var playerItemOxygenBottleAmount;
+// var oxygenfarmAmount;
 var depresAirventAmount;
 var playersConsumeSameAir;
 
@@ -28,8 +27,10 @@ $(document).ready(function(){
     // Set onClick event.
     $('#calculate-stats').click(function(){
 
-        setBaseStats();
-        calculateStats();
+        // setBaseStats();
+        // calculateStats();
+
+        handleCalculations();
 
     });
 
@@ -78,7 +79,90 @@ function handleGridSwitch(gridSize){
 
 function handleCalculations(){
 
+    // Important vars!
+    var statList                = [];
+    var gridSize                = $('input[name="gridRadios"]:checked').val();
+    var playerCount             = $('#playerCount').val();
+    var playersConsumeSameAir   = playersConsumeSameAir = document.getElementById('playersConsumeSameAir').checked;
 
+    var totalOxygenStorage      = calcTotalOxygenStorage(gridSize);
+    var totalOxygenConsumption  = calcTotalOxygenConsumption(playerCount);
+    var totalOxygenProduction   = calcTotalOxygenProduction(gridSize);
+
+    // Specific calculations.
+    calcTotalOxygenStorageDrain(playersConsumeSameAir, totalOxygenConsumption, totalOxygenStorage);
+
+
+
+    buildStatList();
+
+}
+
+function calcTotalOxygenStorage(gridSize){
+
+    playerItemOxygenBottleAmount    = $('#playerItemOxygenBottle').val();
+    playerItemOxygenBottleStorage   = gameInfo.grids.player.oxygenBottle.storage;
+
+    var totalOxygenStorage = (playerItemOxygenBottleStorage * playerItemOxygenBottleAmount); // Oxygen bottles are for all grids.
+
+    if(gridSize != "player"){
+
+        oxygenTankAmount    = $('#oxygenTankAmount').val();
+        oxygenTankStorage   = gameInfo.grids[gridSize].oxygenTank.storage;
+        totalOxygenStorage  += oxygenTankStorage * oxygenTankAmount;
+
+    }
+
+    pushStat("Oxygen storage", totalOxygenStorage +" o2");
+
+    return totalOxygenStorage;
+
+}
+
+function calcTotalOxygenConsumption(playerCount){
+
+    var playerOxygenConsumption = gameInfo.grids.player.oxygenConsumption;
+
+    var totalOxygenConsumption = playerOxygenConsumption * playerCount;
+
+    pushStat("Oxygen consumption", totalOxygenConsumption +" o2/s");
+
+    return totalOxygenConsumption;
+}
+
+function calcTotalOxygenProduction(gridSize){
+
+    var totalOxygenProduction = 0;
+
+    // Oxyfarms are enabled in large grids.
+    if(gridSize == "large"){
+
+        oxygenfarmAmount            = $('#oxygenFarmAmount').val();
+        oxygenfarmProductionRate    = gameInfo.grids.large.oxygenFarm.production;
+        totalOxygenProduction       += oxygenfarmProductionRate * oxygenfarmAmount;
+
+    }
+
+    pushStat("Oxygen production", totalOxygenProduction +" o2/s");
+
+    return totalOxygenProduction;
+
+}
+
+function calcTotalOxygenStorageDrain( playersConsumeSameAir, totalOxygenConsumption, totalOxygenStorage){
+
+    if(!playersConsumeSameAir){
+
+        pushStat("Oxygen consumption time", "No consumption no drain!");
+
+        return false;
+
+    }
+
+    // Enough farms for enough players? Check if there are players, else reverse it, how many players can live on this amount of farms?
+    if(totalOxygenProduction >= totalOxygenConsumption){
+
+    }
 
 
 }
@@ -133,7 +217,7 @@ function setBaseStats(){
 function calculateStats(){
     // Call all functions in sequence.
 
-    oxygenTankDrain();
+    oxygenTank();
 
     if(gridSize == "large"){
         oxygenFarms();
@@ -146,7 +230,7 @@ function calculateStats(){
 
 }
 
-function oxygenTankDrain(){
+function oxygenTank(){
 
     if(!playersConsumeSameAir){
 
@@ -206,14 +290,6 @@ function oxygenFarms(){
     }
 }
 
-function oxygenFarmsPlayerSustain(){
-
-}
-
-function oxygenFarmsTankFillRate(){
-
-}
-
 function depresurisingAirvents(){
 
     // Calculat if its enough.
@@ -235,9 +311,6 @@ function depresurisingAirvents(){
 
 }
 
-function oxygenGeneratorProduction(){
-
-}
 
 /*--------------------------------------------Utility ---------------------------------------------------
 * Functions designed to be used multiple times and assist in certain ways.
@@ -255,9 +328,8 @@ function pushStat(text, value){
 
 function buildStatList(){
 
-    $('#stat-list').empty();
+    $('#stat-list').empty(); // Empty displayed list.
 
-    //@TODO build stat list..!
     $.each(statList, function(key, obj) {
 
         // var html = "<tr><td>"+ key +"</td><td>"+ value +"</td></tr>";
@@ -266,10 +338,16 @@ function buildStatList(){
         $('#stat-list').append(html);
 
     });
+
+
+    emptyStatList(); // Empty list.
+
 }
 
 function emptyStatList(){
+
     statList = [];
+
 }
 
 /**
