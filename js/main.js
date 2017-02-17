@@ -83,7 +83,13 @@ function setBaseStats(){
 
     //@TODO Are oxygen bottles excluded from this? In the case of depres airvents?
     //@TODO Take oxygen generation from the oxy-gen into consideration! Make this checkbox thingy tho.
-    totalOxygenProduction = oxygenfarmProductionRate * oxygenfarmAmount;
+
+    totalOxygenProduction =0;
+
+    // Oxyfarms are enabled in large grids.
+    if(gridSize == "large"){
+        totalOxygenProduction = oxygenfarmProductionRate * oxygenfarmAmount;
+    }
 
     totalAirventInput = airventInput * depresAirventAmount;
 
