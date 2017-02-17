@@ -1,5 +1,5 @@
 var statList = [];
-var questionCount = 3; // Used to calculate progress.
+// var questionCount = 3; // Used to calculate progress. If not used, get all fields, loop and find values.
 
 
 // On document ready.
@@ -10,30 +10,29 @@ $(document).ready(function(){
 
         calculateStats();
 
-
     });
 
-    // Set multiple fields events.
-    $('.playerCount').change(function(){
-
-        if(document.getElementById('autofillDuplicateFields').checked){
-
-            var oldVal = $(this).val();
-            $('.playerCount').val(oldVal);
-
-        }
-    })
-
-    // Set multiple fields events.
-    $('.largeGridOxygenTank').change(function(){
-
-        if(document.getElementById('autofillDuplicateFields').checked){
-
-            var oldVal = $(this).val();
-            $('.largeGridOxygenTank').val(oldVal);
-
-        }
-    })
+    // // Set multiple fields events.
+    // $('.playerCount').change(function(){
+    //
+    //     if(document.getElementById('autofillDuplicateFields').checked){
+    //
+    //         var oldVal = $(this).val();
+    //         $('.playerCount').val(oldVal);
+    //
+    //     }
+    // })
+    //
+    // // Set multiple fields events.
+    // $('.largeGridOxygenTank').change(function(){
+    //
+    //     if(document.getElementById('autofillDuplicateFields').checked){
+    //
+    //         var oldVal = $(this).val();
+    //         $('.largeGridOxygenTank').val(oldVal);
+    //
+    //     }
+    // })
 
 });
 
@@ -44,8 +43,7 @@ function calculateStats(){
 
     oxygenStats();
     oxygenFarms();
-    // deresurisingAirventsPlayerSurvival();
-    // deresurisingAirventsTankFills();
+    deresurisingAirvents();
 
 
     buildStatList(); // Keep this as last.
@@ -59,7 +57,7 @@ function oxygenStats(){
     var smallGridOxygenTankStorage      = partInfo.grids.small.oxygenTank.storage;
     var playerItemOxygenBottleStorage   = partInfo.playerItems.oxygenBottle.storage;
 
-    var playerCount                     = $('#playerCountOxygenConsumption').val();
+    var playerCount                     = $('#playerCount').val();
     var largeGridOxygenTankAmount       = $('#largeGridOxygenTank').val();
     var smallGridOxygenTankAmount       = $('#smallGridOxygenTank').val();
     var playerItemOxygenBottleAmount    = $('#playerItemOxygenBottle').val();
@@ -82,9 +80,9 @@ function oxygenFarms(){
     var oxygenfarmProductionRate    = partInfo.grids.large.oxygenFarm.production;
     var largeGridOxygenTankStorage  = partInfo.grids.large.oxygenTank.storage;
 
-    var playerCount                 = $('#playerCountOxygenConsumption').val();
+    var playerCount                 = $('#playerCount').val();
     var oxygenfarmAmount            = $('#oxygenFarmAmount').val();
-    var largeGridOxygenTankAmount   = $('#largeGridOxygenTank2').val();
+    var largeGridOxygenTankAmount   = $('#largeGridOxygenTank').val();
 
     // Calculations.
     var totalConsumption    = playerOxygenConsumption * playerCount;
@@ -113,12 +111,12 @@ function oxygenFarms(){
             var fillingTime     = Math.round(totalStorage / totalFillingRate);
             var formattedTime   = formatSecondsToHumanReadable(fillingTime);
 
-            pushStat("Farms tank fill time", formattedTime);
-
             // How many players can be sustained by these farms?
             var totalSustainedPlayers = Math.floor(totalProduction / playerOxygenConsumption);
 
             pushStat("Oxygenfarms can sustain player count", playerCount +"/"+ totalSustainedPlayers);
+
+            pushStat("Farms tank fill time", formattedTime); // Semantically this is second in value.
 
         }else{
             pushStat("Farms tank fill time", "evened out, 0");
@@ -134,33 +132,34 @@ function oxygenFarms(){
     }
 }
 
-function deresurisingAirventsPlayerSurvival(){
+function deresurisingAirvents(){
 
     var airventInput = partInfo.grids.large.airvent.input; // Airvents currently have the same input and output per grid.
 
-    var playerCount     = $('#playerCountDepresurisingAirvents').val();
+    var playerCount     = $('#playerCount').val();
     var airventAmount   = $('#airventsDepresurise').val();
 
     // Calculations.
-    var totalConsumption  = playerOxygenConsumption * playerCount;
-    var totalAirventInput = airventInput * airventAmount;
+    var totalConsumption    = playerOxygenConsumption * playerCount;
+    var totalAirventInput   = airventInput * airventAmount;
+    var totalGain           = totalAirventInput - totalConsumption;
 
-    var isItEnough;
+    // Calculat if its enough.
+    if(totalAirventInput > totalConsumption){
 
-    // Well is it?
-    //@TODO Calculate if its enough.
+        // pushStat("Oxygen consumption time", formattedTime);
+        var totalAirventsPlayerSustain = Math.floor(totalAirventInput / playerOxygenConsumption);
 
+        pushStat("Depres airvents can support you", airventAmount +"/"+ totalAirventsPlayerSustain +" players supported");
 
-    // var returnObject = {
-    //     "text": "Oxygen consumption time",
-    //     "value": formattedTime
-    // };
-    //
-    // statList.push(returnObject);
+    }else{
 
-}
+        // Not enough!
+        var airventsNeeded = Math.ceil(totalConsumption / airventInput);
 
-function deresurisingAirventsTankFills(){
+        pushStat("Airvents can't support you", airventAmount +"/"+ airventsNeeded);
+
+    }
 
 }
 
