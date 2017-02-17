@@ -10,6 +10,10 @@ This tool should be able to calculate thrust (acceleration and needed thrust) an
 
 TODO:
 
+Maybe make a list of all generic fields/items. Then calculate all possible stats from the filled in fields. No duplicates needed!
+
+Add images from the parts to the list.
+
 Power consumption.
 Grid sizes
 Acceleration

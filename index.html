@@ -20,96 +20,264 @@
         <div class="row">
             <!-- Forms and fields, this should scroll. -->
             <div id="main-content" class="col-md-8">
-                <h1>
-                    Space Engineers Calculator
-                </h1>
-                <p>
-                    For more info see: <br />
-                    <a href="http://www.spaceengineersgame.com/">http://www.spaceengineersgame.com/</a><br />
-                    <a href="http://spaceengineerswiki.com/">http://spaceengineerswiki.com/</a><br />
 
-                </p>
+                <div id="section-head" class="section">
+                    <h1>
+                        Space Engineers Calculator
+                    </h1>
+                    <p>
+                        For more info see: <br />
+                        <a href="http://www.spaceengineersgame.com/">http://www.spaceengineersgame.com/</a><br />
+                        <a href="http://spaceengineerswiki.com/">http://spaceengineerswiki.com/</a><br />
 
-                <p>
-                    <h2>Table of contents</h2>
-                    <ul>
-                        <li>
-                            <a href="#oxygenConsumption"> Oxygen consumption</a>
-                        </li>
-                    </ul>
-                </p>
+                    </p>
 
-                <hr />
+                    <p>
+                        <h2 id="TOC">Table of contents</h2>
+                        <ul>
+                            <li>
+                                <a href="#oxygenConsumption"> Oxygen consumption</a>
+                            </li>
+                            <li>
+                                <a href="#oxygenFarmProduction"> Oxygenfarm production</a>
+                            </li>
+                            <li>
+                                <a href="#depresurisingAirvents"> Depresurise airvents</a>
+                            </li>
+                        </ul>
+                    </p>
 
-                <!-- Oxygen consumption calculations. -->
-                <h2 id="oxygenConsumption">
-                    Oxygen consumption
-                </h2>
+                </div>
 
-                <div class="form-horizontal">
+                <div id="section-oxygenConsumption" class="section">
 
-                  <div class="form-group">
+                    <h2 id="oxygenConsumption">
+                        Oxygen consumption
+                    </h2>
 
-                    <label for="playerCount" class="col-sm-2 control-label">Player count</label>
+                    <p>
+                        To breathe is to live. The same is true in Space engineers. <br />
+                        How long can you survive when all tanks and bottles are filled up?
+                    </p>
 
-                    <div class="col-sm-10">
+                    <div class="form-horizontal">
 
-                      <input type="number" class="form-control" id="playerCount" placeholder="1">
+                        <div class="form-group">
+
+                            <label for="playerCountOxygenConsumption" class="col-sm-2 control-label">Player count</label>
+
+                            <div class="col-sm-10">
+
+                                <input type="number" class="form-control playerCount" id="playerCountOxygenConsumption" placeholder="1" value="1">
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="largeGridOxygenTank" class="col-sm-2 control-label">Large grid oxygen tank amount</label>
+
+                            <div class="col-sm-10">
+
+                                <input type="number" class="form-control largeGridOxygenTank" id="largeGridOxygenTank" placeholder="1" value="1">
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="smallGridOxygenTank" class="col-sm-2 control-label">Small grid oxygen tank amount</label>
+
+                            <div class="col-sm-10">
+
+                                <input type="number" class="form-control" id="smallGridOxygenTank" placeholder="1" value="0">
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="playerItemOxygenBottle" class="col-sm-2 control-label">Oxygen bottle amount</label>
+
+                            <div class="col-sm-10">
+
+                                <input type="number" class="form-control" id="playerItemOxygenBottle" placeholder="1" value="0">
+
+                            </div>
+
+                        </div>
 
                     </div>
 
-                  </div>
+                    <a href="#TOC">Back to index</a>
 
-                  <div class="form-group">
+                </div>
 
-                    <label for="largeGridOxygenTank" class="col-sm-2 control-label">Large grid oxygen tank amount</label>
+                <div id="section-oxygenFarmProduction" class="section">
 
-                    <div class="col-sm-10">
+                    <h2 id="oxygenFarmProduction">
+                        Oxygenfarm production
+                    </h2>
 
-                      <input type="number" class="form-control" id="largeGridOxygenTank" placeholder="1">
+                    <p>
+                        "<i>Putting dem weeds in dem tube will make you happy.</i>" Oxygenfarms, thats what I'm talking about! <br />
+                        This section will show you how much you need to get some air and how long it takes before all containers are filled. <br />
+                        Be warned, this uses the most optimal calculations. Keep the sun sparkling on dem greens!
+                    </p>
+
+                    <div class="form-horizontal">
+
+                        <div class="form-group">
+
+                            <label for="playerCountOxygenFarmProduction" class="col-sm-2 control-label">Player count</label>
+
+                            <div class="col-sm-10">
+
+                                <input type="number" class="form-control playerCount" id="playerCountOxygenFarmProduction" placeholder="1" value="1">
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="playersConsumeSameAirAsTanks" class="col-sm-2 control-label">Players breathe</label>
+
+                            <div class="col-sm-10">
+
+
+                                <div class="checkbox">
+
+                                    <label>
+
+                                        <input type="checkbox" id="playersConsumeSameAirAsTanks" checked>
+                                        Players consume same air as tanks, having this checked will first calculate if there is enough farms to supply the players,
+                                        only then how fast the tanks will be filled.
+
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="oxygenFarmAmount" class="col-sm-2 control-label">Oxygen farms</label>
+
+                            <div class="col-sm-10">
+
+                                <input type="number" class="form-control" id="oxygenFarmAmount" placeholder="1" value="1">
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="largeGridOxygenTank" class="col-sm-2 control-label">Large grid oxygen tank amount</label>
+
+                            <div class="col-sm-10">
+
+                                <input type="number" class="form-control largeGridOxygenTank" id="largeGridOxygenTank2" placeholder="1" value="1">
+
+                            </div>
+
+                        </div>
 
                     </div>
 
-                  </div>
+                    <a href="#TOC">Back to index</a>
 
-                  <div class="form-group">
+                </div>
 
-                    <label for="smallGridOxygenTank" class="col-sm-2 control-label">Small grid oxygen tank amount</label>
+                <div id="section-airventInfo" class="section">
 
-                    <div class="col-sm-10">
+                    <h2 id="depresurisingAirvents">
+                        Depresurise airvents
+                    </h2>
 
-                      <input type="number" class="form-control" id="smallGridOxygenTank" placeholder="1">
+                    <p>
+                        How much airvents do you need in the atmosphere to keep you alive inside? <br />
+                        Or do you want to know how long it takes before all oxygen tanks are filled?
+                    </p>
+
+                    <div class="form-horizontal">
+
+                        <div class="form-group">
+
+                            <label for="playerCountDepresurisingAirvents" class="col-sm-2 control-label">Player count</label>
+
+                            <div class="col-sm-10">
+
+                                <input type="number" class="form-control playerCount" id="playerCountDepresurisingAirvents" placeholder="1" value="1">
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="airventsDepresurise" class="col-sm-2 control-label">Amount of depresurising airvents</label>
+
+                            <div class="col-sm-10">
+
+                                <input type="number" class="form-control" id="airventsDepresurise" placeholder="1" value="1">
+
+                            </div>
+
+                        </div>
 
                     </div>
 
-                  </div>
+                    <a href="#TOC">Back to index</a>
 
-                  <div class="form-group">
-
-                    <div class="col-sm-offset-2 col-sm-10">
-
-                      <button type="button" class="btn btn-default">Calculate!</button>
-
-                    </div>
-
-                  </div>
-
-              </div>
+                </div>
 
             </div>
 
             <!-- Fixed position info screen. -->
             <div id="info-window" class="col-md-4">
 
-                <!-- Adding a progress bar to make sure all info is filled in! -->
-                <div class="progress">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">
-                    0%
-                  </div>
+                <h3>
+                    Ship stats
+                </h3>
+
+                <table id="stat-list">
+
+                </table>
+
+                <div id="info-interface">
+                    <!-- Adding a progress bar to make sure all info is filled in!
+                    http://getbootstrap.com/components/#progress-basic -->
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">
+                            0%
+                        </div>
+                    </div>
+
+                    <div class="checkbox">
+
+                        <label>
+
+                            <input type="checkbox" id="autofillDuplicateFields" checked> Auto-fill duplicate fields
+
+                        </label>
+
+                    </div>
+
+                    <button type="button" id="calculate-stats" class="btn btn-blue btn-lg btn-block">Calculate!</button>
+
                 </div>
 
             </div>
+
         </div>
+
     </div>
 
 </body>
