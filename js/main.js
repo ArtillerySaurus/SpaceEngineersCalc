@@ -94,7 +94,6 @@ function handleCalculations(){
     calcTotalOxygenStorageDrain(playersConsumeSameAir, totalOxygenConsumption, totalOxygenStorage);
     calcOxygenFarmPlayerSustain(playerCount, playerOxygenConsumption, totalOxygenProduction);
 
-
     buildStatList();
 
 }
@@ -150,7 +149,7 @@ function calcTotalOxygenProduction(gridSize){
 
 function calcTotalOxygenStorageDrain(playersConsumeSameAir, totalOxygenConsumption, totalOxygenStorage){
 
-    if(!playersConsumeSameAir){
+    if(!playersConsumeSameAir || totalOxygenConsumption <= 0){
 
         pushStat("Oxygen consumption time", "No consumption no drain!");
 
@@ -179,8 +178,6 @@ function calcOxygenFarmPlayerSustain(playerCount, playerOxygenConsumption){
         // How many players can be sustained by current farm amount?
         var totalPlayersSustainOxygenFarms = Math.floor(totalOxygenFarmProduction / playerOxygenConsumption);
 
-        console.log(totalPlayersSustainOxygenFarms);
-
         pushStat("Oxygen farm players", playerCount +"/"+ totalPlayersSustainOxygenFarms);
 
     }else{
@@ -194,6 +191,10 @@ function calcOxygenFarmPlayerSustain(playerCount, playerOxygenConsumption){
 
     }
 
+}
+
+function calcOxygenFarmTankFillingRate(playersConsumeSameAir, totalOxygenStorage){
+    // Do stuff.
 }
 
 function setBaseStats(){
