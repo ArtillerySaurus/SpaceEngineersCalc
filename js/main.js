@@ -84,14 +84,15 @@ function handleCalculations(){
     var gridSize                = $('input[name="gridRadios"]:checked').val();
     var playerCount             = $('#playerCount').val();
     var playersConsumeSameAir   = playersConsumeSameAir = document.getElementById('playersConsumeSameAir').checked;
+    var playerOxygenConsumption = gameInfo.grids.player.oxygenConsumption;
 
     var totalOxygenStorage      = calcTotalOxygenStorage(gridSize);
-    var totalOxygenConsumption  = calcTotalOxygenConsumption(playerCount);
+    var totalOxygenConsumption  = calcTotalOxygenConsumption(playerCount, playerOxygenConsumption);
     var totalOxygenProduction   = calcTotalOxygenProduction(gridSize);
 
     // Specific calculations.
     calcTotalOxygenStorageDrain(playersConsumeSameAir, totalOxygenConsumption, totalOxygenStorage);
-
+    calcOxygenFarmPlayerSustain(playerCount, playerOxygenConsumption, totalOxygenProduction);
 
 
     buildStatList();
@@ -119,9 +120,7 @@ function calcTotalOxygenStorage(gridSize){
 
 }
 
-function calcTotalOxygenConsumption(playerCount){
-
-    var playerOxygenConsumption = gameInfo.grids.player.oxygenConsumption;
+function calcTotalOxygenConsumption(playerCount, playerOxygenConsumption){
 
     var totalOxygenConsumption = playerOxygenConsumption * playerCount;
 
@@ -137,9 +136,9 @@ function calcTotalOxygenProduction(gridSize){
     // Oxyfarms are enabled in large grids.
     if(gridSize == "large"){
 
-        oxygenfarmAmount            = $('#oxygenFarmAmount').val();
-        oxygenfarmProductionRate    = gameInfo.grids.large.oxygenFarm.production;
-        totalOxygenProduction       += oxygenfarmProductionRate * oxygenfarmAmount;
+        var oxygenfarmAmount            = $('#oxygenFarmAmount').val();
+        var oxygenfarmProductionRate    = gameInfo.grids.large.oxygenFarm.production;
+        totalOxygenProduction           += oxygenfarmProductionRate * oxygenfarmAmount;
 
     }
 
@@ -149,7 +148,7 @@ function calcTotalOxygenProduction(gridSize){
 
 }
 
-function calcTotalOxygenStorageDrain( playersConsumeSameAir, totalOxygenConsumption, totalOxygenStorage){
+function calcTotalOxygenStorageDrain(playersConsumeSameAir, totalOxygenConsumption, totalOxygenStorage){
 
     if(!playersConsumeSameAir){
 
@@ -167,7 +166,33 @@ function calcTotalOxygenStorageDrain( playersConsumeSameAir, totalOxygenConsumpt
 
 }
 
-function calcOxygenFarmProduction(totalOxygenStorage){
+function calcOxygenFarmPlayerSustain(playerCount, playerOxygenConsumption){
+
+    // Can the production sustain the consumption?
+    var totalOxygenConsumption      = playerOxygenConsumption * playerCount;
+    var oxygenfarmProductionRate    = gameInfo.grids.large.oxygenFarm.production;
+    var oxygenfarmAmount            = $('#oxygenFarmAmount').val();
+    var totalOxygenFarmProduction   = oxygenfarmProductionRate * oxygenfarmAmount;
+
+    if(totalOxygenFarmProduction >= totalOxygenConsumption){
+
+        // How many players can be sustained by current farm amount?
+        var totalPlayersSustainOxygenFarms = Math.floor(totalOxygenFarmProduction / playerOxygenConsumption);
+
+        console.log(totalPlayersSustainOxygenFarms);
+
+        pushStat("Oxygen farm players", playerCount +"/"+ totalPlayersSustainOxygenFarms);
+
+    }else{
+
+        // So theres not enough oxygen farms to sustain the players. How many do we need then?
+        var oxygenfarmsRequired = Math.ceil(totalOxygenConsumption / oxygenfarmProductionRate);
+
+        console.log(totalOxygenFarmProduction);
+
+        pushStat("Oxygen farms needed", oxygenfarmAmount +"/"+ oxygenfarmsRequired);
+
+    }
 
 }
 
