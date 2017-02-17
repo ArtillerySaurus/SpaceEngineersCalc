@@ -68,6 +68,10 @@ h1, h2, h3{
     background-repeat: repeat-x;
 }
 
+#stat-list{
+    width: 100%;
+}
+
 #stat-list tr{
     border-bottom: 1px solid #0586b6;
     padding-top: 5px;

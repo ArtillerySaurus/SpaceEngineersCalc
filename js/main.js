@@ -1,8 +1,9 @@
 var statList = [];
+// var gridSize;
+
 
 // Field values/user input.
 var playerCount;
-var gridSize;
 var oxygenTankAmount;
 var playerItemOxygenBottleAmount;
 var oxygenfarmAmount;
@@ -35,30 +36,58 @@ $(document).ready(function(){
     // Set onClick event.
     $('input[name="gridRadios"]').click(function(){
 
-        gridSize = $(this).val();
+        var gridSize = $(this).val();
 
-        if(gridSize == "large"){
-
-            $('#oxygenfarmAmount').prop("disabled",true);
-            // $('#oxygenfarmAmount').addAttr("disabled");
-
-        }else{
-
-            //@TODO Enabling doesnt work...
-            $('#oxygenfarmAmount').prop("disabled",false);
-            // $('#oxygenfarmAmount').removeAttr("disabled");
-
-        }
+        handleGridSwitch(gridSize);
 
     });
 
 });
 
+function handleGridSwitch(gridSize){
+    // Grid types: large, small, player.
+    // Grid classes: largeGrid, smallGrid, playerGrid
+
+    if(gridSize == "large"){
+        // Disable smallOnly and playerOnly
+        $('.smallGridOnly').prop("disabled", true);
+        $('.playerGridOnly').prop("disabled", true);
+
+        // Enable largeGrids.
+        $('.largeGrid').prop("disabled", false);
+
+    }else if(gridSize == "small"){
+        // Disable large and player grids.
+        $('.playerGrid').prop("disabled", true);
+        $('.largeGrid').prop("disabled", true);
+
+        // Enable small grids.
+        $('.smallGrid').prop("disabled", false);
+
+    }else{
+        // Disable largeGridOnly and smallGridOnly
+        $('.smallGrid').prop("disabled", true);
+        $('.largeGrid').prop("disabled", true);
+
+        // Enable player grids
+        $('.playerGrid').prop("disabled", false);
+
+    }
+
+}
+
+function handleCalculations(){
+
+
+
+
+}
+
 function setBaseStats(){
 
     // Field values/user input.
-    playerCount                     = $('#playerCount').val();
     gridSize                        = $('input[name="gridRadios"]:checked').val();
+    playerCount                     = $('#playerCount').val();
     oxygenTankAmount                = $('#oxygenTankAmount').val();
     playerItemOxygenBottleAmount    = $('#playerItemOxygenBottle').val();
     oxygenfarmAmount                = $('#oxygenFarmAmount').val();
@@ -104,7 +133,7 @@ function setBaseStats(){
 function calculateStats(){
     // Call all functions in sequence.
 
-    oxygenStats();
+    oxygenTankDrain();
 
     if(gridSize == "large"){
         oxygenFarms();
@@ -117,7 +146,7 @@ function calculateStats(){
 
 }
 
-function oxygenStats(){
+function oxygenTankDrain(){
 
     if(!playersConsumeSameAir){
 
@@ -142,8 +171,6 @@ function oxygenFarms(){
 
         // Can tanks be filled?
         var remainingOxygenGain = totalOxygenProduction - totalOxygenConsumption;
-
-        console.log(remainingOxygenGain);
 
         if(remainingOxygenGain > 0){
 
@@ -177,6 +204,14 @@ function oxygenFarms(){
         pushStat("Oxygenfarms", "need more! ("+ oxygenfarmAmount +"/"+ oxygenfarmsRequired +")");
 
     }
+}
+
+function oxygenFarmsPlayerSustain(){
+
+}
+
+function oxygenFarmsTankFillRate(){
+
 }
 
 function depresurisingAirvents(){
