@@ -39,13 +39,14 @@ $(document).ready(function(){
 
         if(gridSize == "large"){
 
-            $('oxygenfarmAmount').prop("disabled",true);
+            $('#oxygenfarmAmount').prop("disabled",true);
+            // $('#oxygenfarmAmount').addAttr("disabled");
 
         }else{
 
             //@TODO Enabling doesnt work...
-            $('oxygenfarmAmount').prop("disabled",false);
-            $('oxygenfarmAmount').removeAttr("disabled");
+            $('#oxygenfarmAmount').prop("disabled",false);
+            // $('#oxygenfarmAmount').removeAttr("disabled");
 
         }
 
@@ -84,7 +85,7 @@ function setBaseStats(){
     //@TODO Are oxygen bottles excluded from this? In the case of depres airvents?
     //@TODO Take oxygen generation from the oxy-gen into consideration! Make this checkbox thingy tho.
 
-    totalOxygenProduction =0;
+    totalOxygenProduction = 0;
 
     // Oxyfarms are enabled in large grids.
     if(gridSize == "large"){
@@ -191,7 +192,7 @@ function depresurisingAirvents(){
     }else{
 
         // Not enough!
-        var airventsNeeded = Math.ceil(totalConsumption / airventInput);
+        var airventsNeeded = Math.ceil(totalOxygenConsumption / airventInput);
 
         pushStat("Depres airvents", "need more! "+ depresAirventAmount +"/"+ airventsNeeded);
 
