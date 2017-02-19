@@ -84,6 +84,7 @@ function handleCalculations(){
     var gridSize                = $('input[name="gridRadios"]:checked').val();
     var playerCount             = $('#playerCount').val();
     var shipWeight              = $('#shipWeight').val();
+    var planet                  = $('input[name="planetRadios"]:checked').val();
 
     // Oxygen vars
     var playersConsumeSameAir   = playersConsumeSameAir = document.getElementById('playersConsumeSameAir').checked;
@@ -124,6 +125,8 @@ function handleCalculations(){
 
     // Specific Ion calculations.
     calcIonThrustersMaxAcceleration(gridSize, totalIonThrust, shipWeight);
+
+    calcGroundToSpaceTravelTime(planet);
 
     buildStatList();
 
@@ -503,11 +506,26 @@ function calcIonThrustersMaxAcceleration(gridSize, totalIonThrust, shipWeight){
 
 }
 
+function calcGroundToSpaceTravelTime(planet){
+
+    var maxGravitationalPullAltitude = gameInfo.planets[planet].maxGravitationalPullAltitude;
+    maxGravitationalPullAltitude += 2000; // To be sure!
+
+    var maxTravelSpeed = 100;
+
+    var timeToReachMaxGrav = maxGravitationalPullAltitude / maxTravelSpeed;
+
+    formattedTimed = formatSecondsToHumanReadable(timeToReachMaxGrav);
+
+    pushStat("Time to reach space (at full speed)", formattedTimed);
+
+}
+
 /*--------------------------------------------Utility ---------------------------------------------------
 * Functions designed to be used multiple times and assist in certain ways.
 */
 
-function pushStat(text, value, column = false){
+function pushStat(text, value, column = true){
 
     if(column){
 

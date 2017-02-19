@@ -17,3 +17,15 @@ Oxygen generator stuff.
 Design the tool
 Suit hydrogen consumption.
 Possibility to reach space?
+Time to reach space!
+Incorporate planet stuff.
+    Gravitational pull,
+    Atmosphere,
+    ETC
+Progress bar!
+
+
+
+
+Planet ranges etc source:
+https://steamcommunity.com/sharedfiles/filedetails/?id=572132681

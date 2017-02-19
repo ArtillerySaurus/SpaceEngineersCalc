@@ -110,9 +110,34 @@ var gameInfo = {
     },
     "planets":{
         "earth": {
+            "maxGravitationalPull": 1,
+            "maxGravitationalPullAltitude": 41800,
+            "maxAtmosphereAltitude": 6000
+        },
+        "moon": {
             "maxGravitationalPull": 0,
-            "maxGravitationalPullAltitude": 35000,
+            "maxGravitationalPullAltitude": 2900,
+            "maxAtmosphereAltitude": 0
+        },
+        "mars": {
+            "maxGravitationalPull": 0,
+            "maxGravitationalPullAltitude": 38500,
+            "maxAtmosphereAltitude": 0
+        },
+        "europa": {
+            "maxGravitationalPull": 0,
+            "maxGravitationalPullAltitude": 3200,
             "maxAtmosphereAltitude": 7000
-        }
+        },
+        "alien": {
+            "maxGravitationalPull": 0,
+            "maxGravitationalPullAltitude": 42700,
+            "maxAtmosphereAltitude": 7000
+        },
+        "earth": {
+            "maxGravitationalPull": 0,
+            "maxGravitationalPullAltitude": 3000,
+            "maxAtmosphereAltitude": 7000
+        },
     }
 };
