@@ -20,11 +20,23 @@ var gameInfo = {
             },
             "largeHydrogenThruster": {
                 "consumption": 6426.7,
-                "consumptionType": "hydrogen"
+                "consumptionType": "hydrogen",
+                "maximumThrust": 6000
             },
             "smallHydrogenThruster": {
                 "consumption": 514.1,
-                "consumptionType": "hydrogen"
+                "consumptionType": "hydrogen",
+                "maximumThrust": 900
+            },
+            "largeAtmosphericThruster": {
+                "consumption": 0,
+                "consumptionType": "power",
+                "maximumThrust": 5400
+            },
+            "smallAtmosphericThruster": {
+                "consumption": 0,
+                "consumptionType": "power",
+                "maximumThrust": 420
             }
         },
         "small": {
@@ -40,11 +52,23 @@ var gameInfo = {
             },
             "largeHydrogenThruster": {
                 "consumption": 1092.5,
-                "consumptionType": "hydrogen"
+                "consumptionType": "hydrogen",
+                "maximumThrust": 400
             },
             "smallHydrogenThruster": {
                 "consumption": 109.2,
-                "consumptionType": "hydrogen"
+                "consumptionType": "hydrogen",
+                "maximumThrust": 82
+            },
+            "largeAtmosphericThruster": {
+                "consumption": 0,
+                "consumptionType": "power",
+                "maximumThrust": 408
+            },
+            "smallAtmosphericThruster": {
+                "consumption": 0,
+                "consumptionType": "power",
+                "maximumThrust": 80
             }
         },
         "player": {
@@ -62,6 +86,13 @@ var gameInfo = {
             "hydrogenTank": {
                 "storage": 125
             }
+        }
+    },
+    "planets":{
+        "earth": {
+            "maxGravitationalPull": 0,
+            "maxGravitationalPullAltitude": 35000,
+            "maxAtmosphereAltitude": 7000
         }
     }
 };

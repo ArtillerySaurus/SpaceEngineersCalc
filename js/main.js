@@ -83,6 +83,9 @@ function handleCalculations(){
     var statList                = [];
     var gridSize                = $('input[name="gridRadios"]:checked').val();
     var playerCount             = $('#playerCount').val();
+    var shipWeight            = $('#shipWeight').val();
+
+    // Oxygen vars
     var playersConsumeSameAir   = playersConsumeSameAir = document.getElementById('playersConsumeSameAir').checked;
     var playerOxygenConsumption = gameInfo.grids.player.oxygenConsumption;
 
@@ -94,12 +97,23 @@ function handleCalculations(){
     calcTotalOxygenStorageDrain(playersConsumeSameAir, totalOxygenConsumption, totalOxygenStorage);
     calcOxygenFarmPlayerSustain(playerCount, playerOxygenConsumption, totalOxygenProduction);
 
-    var totalHydrogenStorage      = calcTotalHydrogenStorage(gridSize);
-    var totalHydrogenConsumption  = calcTotalHydrogenConsumption(gridSize);
+    pushStat("&nbsp; ", "", false);
+
+    // Atmospheric vars
+    var totalAtmosphericThrust = calcAtmosphericTotalThrust(gridSize);
+
+    // Specific atmospheric calculations.
+    var atmosphericThrustersMaxLift = calcAtmosphericThrustersMaxLift(gridSize, shipWeight, totalAtmosphericThrust);
+
+    pushStat("&nbsp; ", "", false);
+
+    var totalHydrogenStorage        = calcTotalHydrogenStorage(gridSize);
+    var totalHydrogenConsumption    = calcTotalHydrogenConsumption(gridSize);
+    var totalHydrogenThrust         = calcHydrogenTotalThrust(gridSize);
 
     // Specific hydrogen calculations.
     calcHydrogenStorageDrain(totalHydrogenStorage, totalHydrogenConsumption);
-
+    var hydrogenThrustersMaxLift = calcHydrogenThrustersMaxLift(gridSize, shipWeight, totalHydrogenThrust);
 
     buildStatList();
 
@@ -200,11 +214,62 @@ function calcOxygenFarmPlayerSustain(playerCount, playerOxygenConsumption){
         // So theres not enough oxygen farms to sustain the players. How many do we need then?
         var oxygenfarmsRequired = Math.ceil(totalOxygenConsumption / oxygenfarmProductionRate);
 
-        console.log(totalOxygenFarmProduction);
-
         pushStat("Oxygen farms needed", oxygenfarmAmount +"/"+ oxygenfarmsRequired);
 
     }
+
+}
+
+function calcAtmosphericTotalThrust(gridSize){
+
+    var totalAtmosphericThurst = 0;
+
+    if(gridSize == "player"){
+
+        // totalAtmosphericThurst = gameInfo.grids.player.???; // Cant find the suit thrust.
+
+    }
+
+    if(gridSize == "small" || gridSize == "large"){
+
+        var largeAtmosphericThrusterThrust = gameInfo.grids[gridSize].largeAtmosphericThruster.maximumThrust;
+        var largeAtmosphericThrusterAmount = $('#largeAtmosphericThrusterAmount').val();
+
+        var smallAtmosphericThrusterThrust = gameInfo.grids[gridSize].smallAtmosphericThruster.maximumThrust;
+        var smallAtmosphericThrusterAmount = $('#smallAtmosphericThrusterAmount').val();
+
+        totalAtmosphericThurst = largeAtmosphericThrusterThrust * largeAtmosphericThrusterAmount;
+        totalAtmosphericThurst += smallAtmosphericThrusterThrust * smallAtmosphericThrusterAmount;
+
+    }
+
+    pushStat("Atmospheric Thrust", totalAtmosphericThurst +" kN");
+
+    return totalAtmosphericThurst;
+
+}
+
+function calcAtmosphericThrustersMaxLift(gridSize, shipWeight, totalAtmosphericThrust){
+
+    var AtmosphericThrustersMaxLift = 0;
+
+    if(gridSize == "player"){
+
+        return false;
+
+    }
+
+    // AtmosphericThrustersMaxLift = engine force [N] * effectivity [unitless] / acceleration due to gravity [m/s²];
+    AtmosphericThrustersMaxLift = ((totalAtmosphericThrust * 1000) * 0.9) / 9.81;
+    // AtmosphericThrustersMaxLift = (408000 * 0.9) / 9.81;
+    AtmosphericThrustersMaxLift = Math.floor(AtmosphericThrustersMaxLift / 1000);
+
+    pushStat("Atmospheric thrusters max lift", AtmosphericThrustersMaxLift +" kg");
+
+    return AtmosphericThrustersMaxLift;
+
+    // Source and info:
+    //http://www.spaceengineerswiki.com/Thruster#Effectiveness_In_Natural_Gravity
 
 }
 
@@ -267,6 +332,35 @@ function calcTotalHydrogenConsumption(gridSize){
 
 }
 
+function calcHydrogenTotalThrust(gridSize){
+
+    var totalHydrogenThurst = 0;
+
+    if(gridSize == "player"){
+
+        // totalHydrogenThurst = gameInfo.grids.player.???; // Cant find the suit thrust.
+
+    }
+
+    if(gridSize == "small" || gridSize == "large"){
+
+        var largeHydrogenThrusterThrust = gameInfo.grids[gridSize].largeHydrogenThruster.maximumThrust;
+        var largeHydrogenThrusterAmount = $('#largeHydrogenThrusterAmount').val();
+
+        var smallHydrogenThrusterThrust = gameInfo.grids[gridSize].smallHydrogenThruster.maximumThrust;
+        var smallHydrogenThrusterAmount = $('#smallHydrogenThrusterAmount').val();
+
+        totalHydrogenThurst = largeHydrogenThrusterThrust * largeHydrogenThrusterAmount;
+        totalHydrogenThurst += smallHydrogenThrusterThrust * smallHydrogenThrusterAmount;
+
+    }
+
+    pushStat("Hydrogen Thrust", totalHydrogenThurst +" kN");
+
+    return totalHydrogenThurst;
+
+}
+
 function calcHydrogenStorageDrain(totalHydrogenStorage, totalHydrogenConsumption){
 
     if(totalHydrogenConsumption <= 0){
@@ -285,149 +379,27 @@ function calcHydrogenStorageDrain(totalHydrogenStorage, totalHydrogenConsumption
 
 }
 
+function calcHydrogenThrustersMaxLift(gridSize, shipWeight, totalHydrogenThrust){
 
+    var hydrogenThrustersMaxLift = 0;
 
-function setBaseStats(){
-
-    // Field values/user input.
-    gridSize                        = $('input[name="gridRadios"]:checked').val();
-    playerCount                     = $('#playerCount').val();
-    oxygenTankAmount                = $('#oxygenTankAmount').val();
-    playerItemOxygenBottleAmount    = $('#playerItemOxygenBottle').val();
-    oxygenfarmAmount                = $('#oxygenFarmAmount').val();
-    depresAirventAmount             = $('#airventsDepresurise').val();
-    playersConsumeSameAir           = document.getElementById('playersConsumeSameAirAsTanks').checked;
-
-    // Game info taken via gameInfo.js.
-    oxygenTankStorage               = partInfo.grids[gridSize].oxygenTank.storage;
-    playerItemOxygenBottleStorage   = partInfo.playerItems.oxygenBottle.storage;
-    oxygenfarmProductionRate        = partInfo.grids.large.oxygenFarm.production;
-    airventInput                    = partInfo.grids[gridSize].airvent.input;
-
-    // Total calculations.
-    totalOxygenStorage = (oxygenTankStorage * oxygenTankAmount);
-    totalOxygenStorage += (playerItemOxygenBottleStorage * playerItemOxygenBottleAmount);
-
-    totalOxygenConsumption = 0;
-
-    // If players breathe from the same system, correct calculations!
-    if(playersConsumeSameAir){
-        totalOxygenConsumption = playerOxygenConsumption * playerCount;
-    }
-
-    //@TODO Are oxygen bottles excluded from this? In the case of depres airvents?
-    //@TODO Take oxygen generation from the oxy-gen into consideration! Make this checkbox thingy tho.
-
-    totalOxygenProduction = 0;
-
-    // Oxyfarms are enabled in large grids.
-    if(gridSize == "large"){
-        totalOxygenProduction = oxygenfarmProductionRate * oxygenfarmAmount;
-    }
-
-    totalAirventInput = airventInput * depresAirventAmount;
-
-    pushStat("Oxy storage", totalOxygenStorage +" o2");
-    pushStat("Oxy consumption", totalOxygenConsumption +" o2/s");
-    pushStat("Oxy production", totalOxygenProduction +" o2/s");
-    pushStat("Depres airvent input", totalAirventInput +" o2/s");
-
-}
-
-function calculateStats(){
-    // Call all functions in sequence.
-
-    oxygenTank();
-
-    if(gridSize == "large"){
-        oxygenFarms();
-    }
-
-    depresurisingAirvents();
-
-    buildStatList(); // Keep this as last.
-    emptyStatList(); // Empty list.
-
-}
-
-function oxygenTank(){
-
-    if(!playersConsumeSameAir){
-
-        pushStat("Oxygen consumption time", "No consumption no drain!");
+    if(gridSize == "player"){
 
         return false;
 
     }
 
-    var consumptionTime = Math.round(totalOxygenStorage / totalOxygenConsumption);
+    // hydrogenThrustersMaxLift = engine force [N] * effectivity [unitless] / acceleration due to gravity [m/s²];
+    hydrogenThrustersMaxLift = ((totalHydrogenThrust * 1000) * 1.0) / 9.81;
 
-    var formattedTime = formatSecondsToHumanReadable(consumptionTime);
+    hydrogenThrustersMaxLift = Math.floor(hydrogenThrustersMaxLift / 1000);
 
-    pushStat("Oxygen consumption time", formattedTime);
+    pushStat("Hydrogen thrusters max lift", hydrogenThrustersMaxLift +" kg");
 
-}
+    return hydrogenThrustersMaxLift;
 
-function oxygenFarms(){
-
-    // Enough farms for enough players? Check if there are players, else reverse it, how many players can live on this amount of farms?
-    if(totalOxygenProduction >= totalOxygenConsumption){
-
-        // Can tanks be filled?
-        var remainingOxygenGain = totalOxygenProduction - totalOxygenConsumption;
-
-        if(remainingOxygenGain > 0){
-
-            // How fast will tanks be filled?
-            var totalFillingRate = totalOxygenProduction;
-
-            // Is the player breathing this air aswell? If so correct for this.
-            if(playersConsumeSameAir){
-                totalFillingRate = totalOxygenProduction - totalOxygenConsumption;
-            }
-
-            var fillingTime     = Math.round(totalOxygenStorage / totalFillingRate);
-            var formattedTime   = formatSecondsToHumanReadable(fillingTime);
-
-            // How many players can be sustained by these farms?
-            var totalSustainedPlayers = Math.floor(totalFillingRate / playerOxygenConsumption);
-
-            pushStat("Oxygenfarms can sustain player count", playerCount +"/"+ totalSustainedPlayers);
-
-            pushStat("Farms tank fill time", formattedTime); // Semantically this is second in value.
-
-        }else{
-            pushStat("Farms tank fill time", "evened out, 0");
-        }
-
-    }else if(playersConsumeSameAir){
-
-        // How many farms are needed to fulfill player count requirements? % thingy?
-        var oxygenfarmsRequired = Math.ceil(totalOxygenConsumption / totalOxygenProduction);
-
-        pushStat("Oxygenfarms", "need more! ("+ oxygenfarmAmount +"/"+ oxygenfarmsRequired +")");
-
-    }
-}
-
-function depresurisingAirvents(){
-
-    // Calculat if its enough.
-    if(totalAirventInput > totalOxygenConsumption){
-
-        // pushStat("Oxygen consumption time", formattedTime);
-        var totalAirventsPlayerSustain = Math.floor(totalAirventInput / playerOxygenConsumption);
-
-        pushStat("Depres airvents", "enough "+ depresAirventAmount +"/"+ totalAirventsPlayerSustain +" players supported");
-
-    }else{
-
-        // Not enough!
-        var airventsNeeded = Math.ceil(totalOxygenConsumption / airventInput);
-
-        pushStat("Depres airvents", "need more! "+ depresAirventAmount +"/"+ airventsNeeded);
-
-    }
+    // Source and info:
+    //http://www.spaceengineerswiki.com/Thruster#Effectiveness_In_Natural_Gravity
 
 }
 
@@ -436,12 +408,23 @@ function depresurisingAirvents(){
 * Functions designed to be used multiple times and assist in certain ways.
 */
 
-function pushStat(text, value){
+function pushStat(text, value, column = false){
 
-    var returnObject = {
-        "text": text + ":",
-        "value": value
-    };
+    if(column){
+
+        var returnObject = {
+            "text": text + ":",
+            "value": value
+        };
+
+    }else{
+
+        var returnObject = {
+            "text": text,
+            "value": value
+        };
+
+    }
 
     statList.push(returnObject);
 }

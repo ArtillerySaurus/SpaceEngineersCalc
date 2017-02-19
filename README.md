@@ -14,10 +14,10 @@ Maybe make a list of all generic fields/items. Then calculate all possible stats
 Add images from the parts to the list.
 Power consumption.
 Acceleration
+Max lift etc.
 Correct stats per item
-Calculations
 Gravity scaling
-Hydrogen consumption
 Oxygen generator stuff.
 Design the tool
 Suit hydrogen consumption.
+Add stat list separator.
