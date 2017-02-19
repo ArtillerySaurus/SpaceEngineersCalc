@@ -134,7 +134,7 @@ var gameInfo = {
             "maxGravitationalPullAltitude": 42700,
             "maxAtmosphereAltitude": 7000
         },
-        "earth": {
+        "titan": {
             "maxGravitationalPull": 0,
             "maxGravitationalPullAltitude": 3000,
             "maxAtmosphereAltitude": 7000

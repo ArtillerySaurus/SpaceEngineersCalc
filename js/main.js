@@ -508,6 +508,8 @@ function calcIonThrustersMaxAcceleration(gridSize, totalIonThrust, shipWeight){
 
 function calcGroundToSpaceTravelTime(planet){
 
+    console.log("Planet "+ planet);
+
     var maxGravitationalPullAltitude = gameInfo.planets[planet].maxGravitationalPullAltitude;
     maxGravitationalPullAltitude += 2000; // To be sure!
 
