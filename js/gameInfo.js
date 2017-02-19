@@ -37,6 +37,16 @@ var gameInfo = {
                 "consumption": 0,
                 "consumptionType": "power",
                 "maximumThrust": 420
+            },
+            "largeIonThruster": {
+                "consumption": 0,
+                "consumptionType": "power",
+                "maximumThrust": 3600
+            },
+            "smallIonThruster": {
+                "consumption": 0,
+                "consumptionType": "power",
+                "maximumThrust": 288
             }
         },
         "small": {
@@ -69,6 +79,16 @@ var gameInfo = {
                 "consumption": 0,
                 "consumptionType": "power",
                 "maximumThrust": 80
+            },
+            "largeIonThruster": {
+                "consumption": 0,
+                "consumptionType": "power",
+                "maximumThrust": 144
+            },
+            "smallIonThruster": {
+                "consumption": 0,
+                "consumptionType": "power",
+                "maximumThrust": 12
             }
         },
         "player": {

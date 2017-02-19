@@ -10,14 +10,10 @@ This tool should be able to calculate thrust (acceleration and needed thrust) an
 
 TODO:
 Inventory multipliers/settings
-Maybe make a list of all generic fields/items. Then calculate all possible stats from the filled in fields. No duplicates needed!
-Add images from the parts to the list.
+Add images from the parts to the list?
 Power consumption.
-Acceleration
-Max lift etc.
-Correct stats per item
 Gravity scaling
 Oxygen generator stuff.
 Design the tool
 Suit hydrogen consumption.
-Add stat list separator.
+Possibility to reach space?
