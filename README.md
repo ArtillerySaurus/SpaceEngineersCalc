@@ -22,7 +22,8 @@ Incorporate planet stuff.
     Gravitational pull,
     Atmosphere,
     ETC
-Progress bar!
+Progress bar!?
+Saving of stats, via GET par?
 
 
 
