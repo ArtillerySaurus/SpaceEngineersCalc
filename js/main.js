@@ -90,22 +90,37 @@ function handleCalculations(){
     var totalOxygenConsumption  = calcTotalOxygenConsumption(playerCount, playerOxygenConsumption);
     var totalOxygenProduction   = calcTotalOxygenProduction(gridSize);
 
-    // Specific calculations.
+    // Specific oxygen calculations.
     calcTotalOxygenStorageDrain(playersConsumeSameAir, totalOxygenConsumption, totalOxygenStorage);
     calcOxygenFarmPlayerSustain(playerCount, playerOxygenConsumption, totalOxygenProduction);
+
+    var totalHydrogenStorage      = calcTotalHydrogenStorage(gridSize);
+    var totalHydrogenConsumption  = calcTotalHydrogenConsumption(gridSize);
+
+    // Specific hydrogen calculations.
+    calcHydrogenStorageDrain(totalHydrogenStorage, totalHydrogenConsumption);
+
 
     buildStatList();
 
 }
 
-function calcTotalOxygenStorage(gridSize){
+function calcTotalOxygenStorage(gridSize, playerCount){
 
     playerItemOxygenBottleAmount    = $('#playerItemOxygenBottle').val();
     playerItemOxygenBottleStorage   = gameInfo.grids.player.oxygenBottle.storage;
 
     var totalOxygenStorage = (playerItemOxygenBottleStorage * playerItemOxygenBottleAmount); // Oxygen bottles are for all grids.
 
-    if(gridSize != "player"){
+    if(gridSize == "player"){
+
+        var internalSuitStorage = gameInfo.grids.player.oxygenTank.storage;
+
+        totalOxygenStorage += internalSuitStorage * playerCount;
+
+    }
+
+    if(gridSize == "small" || gridSize == "large"){
 
         oxygenTankAmount    = $('#oxygenTankAmount').val();
         oxygenTankStorage   = gameInfo.grids[gridSize].oxygenTank.storage;
@@ -193,9 +208,84 @@ function calcOxygenFarmPlayerSustain(playerCount, playerOxygenConsumption){
 
 }
 
-function calcOxygenFarmTankFillingRate(playersConsumeSameAir, totalOxygenStorage){
-    // Do stuff.
+function calcTotalHydrogenStorage(gridSize, playerCount){
+
+    playerItemHydrogenBottleAmount    = $('#playerItemHydrogenBottle').val();
+    playerItemHydrogenBottleStorage   = gameInfo.grids.player.hydrogenBottle.storage;
+
+    var totalHydrogenStorage = (playerItemHydrogenBottleStorage * playerItemHydrogenBottleAmount); // Hydrogen bottles are for all grids.
+
+    if(gridSize == "player"){
+
+        var internalSuitStorage = gameInfo.grids.player.HydrogenTank.storage;
+
+        totalHydrogenStorage += internalSuitStorage * playerCount;
+
+    }
+
+    if(gridSize == "small" || gridSize == "large"){
+
+        HydrogenTankAmount    = $('#HydrogenTankAmount').val();
+        HydrogenTankStorage   = gameInfo.grids[gridSize].hydrogenTank.storage;
+        totalHydrogenStorage  += HydrogenTankStorage * HydrogenTankAmount;
+
+    }
+
+    pushStat("Hydrogen storage", totalHydrogenStorage +" H");
+
+    return totalHydrogenStorage;
+
 }
+
+function calcTotalHydrogenConsumption(gridSize){
+
+    var totalHydrogenConsumption = 0;
+
+    if(gridSize == "player"){
+
+        // totalHydrogenConsumption = gameInfo.grids.player.hydrogenConsumption; // Cant find the suit consumption.
+
+    }
+
+    if(gridSize == "small" || gridSize == "large"){
+
+        // totalHydrogenConsumption = gameInfo.grids.player.hydrogenConsumption; // Cant find the suit consumption.
+        largeHydrogenThrusterAmount         = $('#largeHydrogenThrusterAmount').val();
+        largeHydrogenThrusterConsumption    = gameInfo.grids[gridSize].largeHydrogenThruster.consumption;
+
+        smallHydrogenThrusterAmount         = $('#smallHydrogenThrusterAmount').val();
+        smallHydrogenThrusterConsumption    = gameInfo.grids[gridSize].smallHydrogenThruster.consumption;
+
+        totalHydrogenConsumption = largeHydrogenThrusterConsumption * largeHydrogenThrusterAmount;
+        totalHydrogenConsumption += smallHydrogenThrusterConsumption * smallHydrogenThrusterAmount;
+
+    }
+
+    pushStat("Hydrogen consumption", totalHydrogenConsumption +" H/s");
+
+    return totalHydrogenConsumption;
+
+}
+
+function calcHydrogenStorageDrain(totalHydrogenStorage, totalHydrogenConsumption){
+
+    if(totalHydrogenConsumption <= 0){
+
+        pushStat("Oxygen consumption time", "No consumption no drain!");
+
+        return false;
+
+    }
+
+    var consumptionTime = Math.round(totalHydrogenStorage / totalHydrogenConsumption);
+
+    var formattedTime = formatSecondsToHumanReadable(consumptionTime);
+
+    pushStat("Hydrogen consumption time", formattedTime);
+
+}
+
+
 
 function setBaseStats(){
 

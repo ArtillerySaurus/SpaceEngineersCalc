@@ -9,16 +9,15 @@ The aim is to make a calculator capable of doing everything that I want it to do
 This tool should be able to calculate thrust (acceleration and needed thrust) and consumption (hydrogen, oxygen, power).
 
 TODO:
-
+Inventory multipliers/settings
 Maybe make a list of all generic fields/items. Then calculate all possible stats from the filled in fields. No duplicates needed!
-
 Add images from the parts to the list.
-
 Power consumption.
-Grid sizes
 Acceleration
 Correct stats per item
 Calculations
 Gravity scaling
-Hydrogen consumption (per engine)
+Hydrogen consumption
+Oxygen generator stuff.
 Design the tool
+Suit hydrogen consumption.
