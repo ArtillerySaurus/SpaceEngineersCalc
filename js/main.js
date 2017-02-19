@@ -282,7 +282,7 @@ function calcAtmosphericThrustersMaxLift(gridSize, totalAtmosphericThrust){
     // AtmosphericThrustersMaxLift = engine force [N] * effectivity [unitless] / acceleration due to gravity [m/s²];
     AtmosphericThrustersMaxLift = ((totalAtmosphericThrust * 1000) * 0.9) / 9.81;
     // AtmosphericThrustersMaxLift = (408000 * 0.9) / 9.81;
-    AtmosphericThrustersMaxLift = Math.floor(AtmosphericThrustersMaxLift / 1000);
+    AtmosphericThrustersMaxLift = Math.floor(AtmosphericThrustersMaxLift);
 
     pushStat("Atmospheric thrusters max lift", AtmosphericThrustersMaxLift +" kg");
 
@@ -429,7 +429,7 @@ function calcHydrogenThrustersMaxLift(gridSize, totalHydrogenThrust){
     // hydrogenThrustersMaxLift = engine force [N] * effectivity [unitless] / acceleration due to gravity [m/s²];
     hydrogenThrustersMaxLift = ((totalHydrogenThrust * 1000) * 1.0) / 9.81;
 
-    hydrogenThrustersMaxLift = Math.floor(hydrogenThrustersMaxLift / 1000);
+    hydrogenThrustersMaxLift = Math.floor(hydrogenThrustersMaxLift);
 
     pushStat("Hydrogen thrusters max lift", hydrogenThrustersMaxLift +" kg");
 
