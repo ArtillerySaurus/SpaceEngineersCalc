@@ -83,13 +83,13 @@ function handleCalculations(){
     var statList                = [];
     var gridSize                = $('input[name="gridRadios"]:checked').val();
     var playerCount             = $('#playerCount').val();
-    var shipWeight            = $('#shipWeight').val();
+    var shipWeight              = $('#shipWeight').val();
 
     // Oxygen vars
     var playersConsumeSameAir   = playersConsumeSameAir = document.getElementById('playersConsumeSameAir').checked;
     var playerOxygenConsumption = gameInfo.grids.player.oxygenConsumption;
 
-    var totalOxygenStorage      = calcTotalOxygenStorage(gridSize);
+    var totalOxygenStorage      = calcTotalOxygenStorage(gridSize, playerCount);
     var totalOxygenConsumption  = calcTotalOxygenConsumption(playerCount, playerOxygenConsumption);
     var totalOxygenProduction   = calcTotalOxygenProduction(gridSize);
 
@@ -108,7 +108,7 @@ function handleCalculations(){
 
     pushStat("&nbsp; ", "", false);
 
-    var totalHydrogenStorage        = calcTotalHydrogenStorage(gridSize);
+    var totalHydrogenStorage        = calcTotalHydrogenStorage(gridSize, playerCount);
     var totalHydrogenConsumption    = calcTotalHydrogenConsumption(gridSize);
     var totalHydrogenThrust         = calcHydrogenTotalThrust(gridSize);
 
@@ -149,6 +149,16 @@ function calcTotalOxygenStorage(gridSize, playerCount){
         oxygenTankAmount    = $('#oxygenTankAmount').val();
         oxygenTankStorage   = gameInfo.grids[gridSize].oxygenTank.storage;
         totalOxygenStorage  += oxygenTankStorage * oxygenTankAmount;
+
+    }
+
+    if(totalOxygenStorage <= 0){
+
+        totalOxygenStorage = 0;
+
+        pushStat("Oxygen storage", "No storage to drain.");
+
+        return totalOxygenStorage;
 
     }
 
@@ -309,7 +319,7 @@ function calcTotalHydrogenStorage(gridSize, playerCount){
 
     if(gridSize == "player"){
 
-        var internalSuitStorage = gameInfo.grids.player.HydrogenTank.storage;
+        var internalSuitStorage = gameInfo.grids.player.hydrogenTank.storage;
 
         totalHydrogenStorage += internalSuitStorage * playerCount;
 
