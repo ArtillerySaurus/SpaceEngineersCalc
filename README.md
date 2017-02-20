@@ -9,21 +9,18 @@ The aim is to make a calculator capable of doing everything that I want it to do
 This tool should be able to calculate thrust (acceleration and needed thrust) and consumption (hydrogen, oxygen, power).
 
 TODO:
-Inventory multipliers/settings
-Add images from the parts to the list?
 Power consumption.
 Gravity scaling
 Oxygen generator stuff.
-Design the tool
 Suit hydrogen consumption.
 Possibility to reach space?
-Time to reach space!
 Incorporate planet stuff.
     Gravitational pull,
     Atmosphere,
     ETC
-Progress bar!?
 Saving of stats, via GET par?
+Inventory max weight?
+Inventory multipliers/settings
 
 
 

@@ -6,6 +6,25 @@ h1, h2, h3{
     color: #0586b6;
 }
 
+.red{
+    color: #cc0000;
+    font-weight: 600;
+}
+
+.orange{
+    color: #ff6600;
+    font-weight: 600;
+}
+
+.green{
+    color: #33cc33;
+    font-weight: 600;
+}
+
+.black{
+    color: #333;
+}
+
 .wrapper, .row {
    height: 100%;
    margin-left:0;

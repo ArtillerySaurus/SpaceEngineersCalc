@@ -1,26 +1,5 @@
 var statList = [];
 
-// Field values/user input.
-// var playerCount;
-// var gridSize;
-// var oxygenTankAmount;
-// var playerItemOxygenBottleAmount;
-// var oxygenfarmAmount;
-var depresAirventAmount;
-var playersConsumeSameAir;
-
-// Game info taken via gameInfo.js.
-var oxygenTankStorage;
-var playerItemOxygenBottleStorage;
-var oxygenfarmProductionRate;
-var airventInput;
-
-// Totals.
-var totalOxygenStorage;
-var totalOxygenConsumption;
-var totalOxygenProduction;
-var totalAirventInput;
-
 // On document ready.
 $(document).ready(function(){
 
@@ -98,7 +77,7 @@ function handleCalculations(){
     calcTotalOxygenStorageDrain(playersConsumeSameAir, totalOxygenConsumption, totalOxygenStorage);
     calcOxygenFarmPlayerSustain(playerCount, playerOxygenConsumption, totalOxygenProduction);
 
-    pushStat("&nbsp; ", "", false);
+    pushStat("&nbsp; ", false);
 
     // Atmospheric vars
     var totalAtmosphericThrust = calcAtmosphericTotalThrust(gridSize);
@@ -106,8 +85,9 @@ function handleCalculations(){
     // Specific atmospheric calculations.
     var atmosphericThrustersMaxLift = calcAtmosphericThrustersMaxLift(gridSize, totalAtmosphericThrust);
     calcAtmosphericThrustersMaxAcceleration(gridSize, totalAtmosphericThrust, shipWeight);
+    canThrustersLiftShip(shipWeight, atmosphericThrustersMaxLift, "Atmospheric");
 
-    pushStat("&nbsp; ", "", false);
+    pushStat("&nbsp; ", false);
 
     var totalHydrogenStorage        = calcTotalHydrogenStorage(gridSize, playerCount);
     var totalHydrogenConsumption    = calcTotalHydrogenConsumption(gridSize);
@@ -117,14 +97,25 @@ function handleCalculations(){
     calcHydrogenStorageDrain(totalHydrogenStorage, totalHydrogenConsumption);
     var hydrogenThrustersMaxLift = calcHydrogenThrustersMaxLift(gridSize, totalHydrogenThrust);
     calcHydrogenThrustersMaxAcceleration(gridSize, totalHydrogenThrust, shipWeight);
+    canThrustersLiftShip(shipWeight, hydrogenThrustersMaxLift, "Hydrogen");
 
-    pushStat("&nbsp; ", "", false);
+    pushStat("&nbsp; ", false);
+
+
+
+    // Calculate total combined thrust.
+    var totalShipLift = calcAllThrustersMaxLift(atmosphericThrustersMaxLift, hydrogenThrustersMaxLift);
+    canThrustersLiftShip(shipWeight, totalShipLift, "Total");
+
+    pushStat("&nbsp; ", false);
 
     // Ion vars
     var totalIonThrust = calcIonTotalThrust(gridSize);
 
     // Specific Ion calculations.
     calcIonThrustersMaxAcceleration(gridSize, totalIonThrust, shipWeight);
+
+    pushStat("&nbsp; ", false);
 
     calcGroundToSpaceTravelTime(planet);
 
@@ -159,7 +150,7 @@ function calcTotalOxygenStorage(gridSize, playerCount){
 
         totalOxygenStorage = 0;
 
-        pushStat("Oxygen storage", "No storage to drain.");
+        pushStat("Oxygen storage", "No storage to drain.", "orange");
 
         return totalOxygenStorage;
 
@@ -203,7 +194,7 @@ function calcTotalOxygenStorageDrain(playersConsumeSameAir, totalOxygenConsumpti
 
     if(!playersConsumeSameAir || totalOxygenConsumption <= 0){
 
-        pushStat("Oxygen consumption time", "No consumption no drain!");
+        pushStat("Oxygen consumption time", "No consumption no drain!", "orange");
 
         return false;
 
@@ -230,14 +221,14 @@ function calcOxygenFarmPlayerSustain(playerCount, playerOxygenConsumption){
         // How many players can be sustained by current farm amount?
         var totalPlayersSustainOxygenFarms = Math.floor(totalOxygenFarmProduction / playerOxygenConsumption);
 
-        pushStat("Oxygen farm players", playerCount +"/"+ totalPlayersSustainOxygenFarms);
+        pushStat("Oxygen farm players", playerCount +"/"+ totalPlayersSustainOxygenFarms, "green");
 
     }else{
 
         // So theres not enough oxygen farms to sustain the players. How many do we need then?
         var oxygenfarmsRequired = Math.ceil(totalOxygenConsumption / oxygenfarmProductionRate);
 
-        pushStat("Oxygen farms needed", oxygenfarmAmount +"/"+ oxygenfarmsRequired);
+        pushStat("Oxygen farms needed", oxygenfarmAmount +"/"+ oxygenfarmsRequired, "red");
 
     }
 
@@ -405,7 +396,7 @@ function calcHydrogenStorageDrain(totalHydrogenStorage, totalHydrogenConsumption
 
     if(totalHydrogenConsumption <= 0){
 
-        pushStat("Oxygen consumption time", "No consumption no drain!");
+        pushStat("Oxygen consumption time", "No consumption no drain!", "orange");
 
         return false;
 
@@ -523,24 +514,50 @@ function calcGroundToSpaceTravelTime(planet){
 
 }
 
+function calcAllThrustersMaxLift(atmosphericThrustersMaxLift, hydrogenThrustersMaxLift){
+
+    var allThrustersMaxLift = atmosphericThrustersMaxLift + hydrogenThrustersMaxLift;
+
+    pushStat("All thrusters combined lift", allThrustersMaxLift);
+
+    return allThrustersMaxLift;
+
+}
+
+function canThrustersLiftShip(shipWeight, thrustersMaxLift, thrusterType){
+
+    if(shipWeight < thrustersMaxLift){
+
+        pushStat(thrusterType +" thruster lift", "Can lift your ship!", "green");
+
+    }else{
+
+        pushStat(thrusterType +" thruster lift", "Not enough lift.", "red");
+
+    }
+
+}
+
 /*--------------------------------------------Utility ---------------------------------------------------
 * Functions designed to be used multiple times and assist in certain ways.
 */
 
-function pushStat(text, value, column = true){
+function pushStat(text, value = false, color = "black"){
 
-    if(column){
+    if(value){
 
         var returnObject = {
             "text": text + ":",
-            "value": value
+            "value": value,
+            "color": color
         };
 
     }else{
 
         var returnObject = {
             "text": text,
-            "value": value
+            "value": "",
+            "color": color
         };
 
     }
@@ -554,8 +571,7 @@ function buildStatList(){
 
     $.each(statList, function(key, obj) {
 
-        // var html = "<tr><td>"+ key +"</td><td>"+ value +"</td></tr>";
-        var html = "<tr><td>"+ obj.text +"</td><td>"+ obj.value +"</td></tr>";
+        var html = '<tr class="'+ obj.color +'"><td>'+ obj.text +'</td><td>'+ obj.value +'</td></tr>';
 
         $('#stat-list').append(html);
 
