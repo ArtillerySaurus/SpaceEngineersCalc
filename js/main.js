@@ -80,13 +80,10 @@ function handleCalculations(){
     pushStat("&nbsp; ", false);
 
     // Atmospheric vars
-    // var totalAtmosphericThrust = calcAtmosphericTotalThrust(gridSize);
     var totalAtmosphericThrust = calcThrusterTypeTotalThrust(gridSize, "Atmospheric");
 
     // Specific atmospheric calculations.
-    // var atmosphericThrustersMaxLift = calcAtmosphericThrustersMaxLift(gridSize, totalAtmosphericThrust);
     var atmosphericThrustersMaxLift = calcThrusterTypeMaxLift(gridSize, "Atmospheric", totalAtmosphericThrust);
-    // calcAtmosphericThrustersMaxAcceleration(gridSize, totalAtmosphericThrust, shipWeight);
     calcThrusterTypeMaxAcceleration(gridSize, totalAtmosphericThrust, shipWeight, "Atmospheric");
     canThrustersLiftShip(shipWeight, atmosphericThrustersMaxLift, "Atmospheric");
 
@@ -94,20 +91,15 @@ function handleCalculations(){
 
     var totalHydrogenStorage        = calcTotalHydrogenStorage(gridSize, playerCount);
     var totalHydrogenConsumption    = calcTotalHydrogenConsumption(gridSize);
-    // var totalHydrogenThrust         = calcHydrogenTotalThrust(gridSize);
     var totalHydrogenThrust         = calcThrusterTypeTotalThrust(gridSize, "Hydrogen");
 
     // Specific hydrogen calculations.
     calcHydrogenStorageDrain(totalHydrogenStorage, totalHydrogenConsumption);
-    // var hydrogenThrustersMaxLift = calcHydrogenThrustersMaxLift(gridSize, totalHydrogenThrust);
-    var hydrogenThrustersMaxLift = calcThrusterTypeMaxLift(gridSize, "Hydrogen", totalAtmosphericThrust);
-    // calcHydrogenThrustersMaxAcceleration(gridSize, totalHydrogenThrust, shipWeight);
+    var hydrogenThrustersMaxLift = calcThrusterTypeMaxLift(gridSize, "Hydrogen", totalHydrogenThrust);
     calcThrusterTypeMaxAcceleration(gridSize, totalHydrogenThrust, shipWeight, "Hydrogen");
     canThrustersLiftShip(shipWeight, hydrogenThrustersMaxLift, "Hydrogen");
 
     pushStat("&nbsp; ", false);
-
-
 
     // Calculate total combined thrust.
     var totalShipLift = calcAllThrustersMaxLift(atmosphericThrustersMaxLift, hydrogenThrustersMaxLift);
@@ -116,12 +108,10 @@ function handleCalculations(){
     pushStat("&nbsp; ", false);
 
     // Ion vars
-    // var totalIonThrust = calcIonTotalThrust(gridSize);
     var totalIonThrust = calcThrusterTypeTotalThrust(gridSize, "Ion");
 
     // Specific Ion calculations.
-    // calcIonThrustersMaxAcceleration(gridSize, totalIonThrust, shipWeight);
-    calcThrusterTypeMaxAcceleration(gridSize, totalHydrogenThrust, shipWeight, "Ion");
+    calcThrusterTypeMaxAcceleration(gridSize, totalIonThrust, shipWeight, "Ion");
 
     pushStat("&nbsp; ", false);
 
@@ -242,76 +232,6 @@ function calcOxygenFarmPlayerSustain(playerCount, playerOxygenConsumption){
 
 }
 
-function calcAtmosphericTotalThrust(gridSize){
-
-    var totalAtmosphericThurst = 0;
-
-    if(gridSize == "player"){
-
-        // totalAtmosphericThurst = gameInfo.grids.player.???; // Cant find the suit thrust.
-
-    }
-
-    if(gridSize == "small" || gridSize == "large"){
-
-        var largeAtmosphericThrusterThrust = gameInfo.grids[gridSize].largeAtmosphericThruster.maximumThrust;
-        var largeAtmosphericThrusterAmount = $('#largeAtmosphericThrusterAmount').val();
-
-        var smallAtmosphericThrusterThrust = gameInfo.grids[gridSize].smallAtmosphericThruster.maximumThrust;
-        var smallAtmosphericThrusterAmount = $('#smallAtmosphericThrusterAmount').val();
-
-        totalAtmosphericThurst = largeAtmosphericThrusterThrust * largeAtmosphericThrusterAmount;
-        totalAtmosphericThurst += smallAtmosphericThrusterThrust * smallAtmosphericThrusterAmount;
-
-    }
-
-    pushStat("Atmospheric Thrust", totalAtmosphericThurst +" kN");
-
-    return totalAtmosphericThurst;
-
-}
-
-function calcAtmosphericThrustersMaxLift(gridSize, totalAtmosphericThrust){
-
-    var AtmosphericThrustersMaxLift = 0;
-
-    if(gridSize == "player"){
-
-        return false;
-
-    }
-
-    // AtmosphericThrustersMaxLift = engine force [N] * effectivity [unitless] / acceleration due to gravity [m/s²];
-    AtmosphericThrustersMaxLift = ((totalAtmosphericThrust * 1000) * 0.9) / 9.81;
-    // AtmosphericThrustersMaxLift = (408000 * 0.9) / 9.81;
-    AtmosphericThrustersMaxLift = Math.floor(AtmosphericThrustersMaxLift);
-
-    pushStat("Atmospheric thrusters max lift", AtmosphericThrustersMaxLift +" kg");
-
-    return AtmosphericThrustersMaxLift;
-
-    // Source and info:
-    //http://www.spaceengineerswiki.com/Thruster#Effectiveness_In_Natural_Gravity
-
-}
-
-function calcAtmosphericThrustersMaxAcceleration(gridSize, totalAtmosphericThrust, shipWeight){
-
-    var AtmosphericThrustersMaxAcceleration = 0;
-
-    if(gridSize == "player"){
-
-        return false;
-
-    }
-
-    AtmosphericThrustersMaxAcceleration = ((totalAtmosphericThrust * 1000) * 0.9) / shipWeight;
-    AtmosphericThrustersMaxAcceleration = formatAccelerationToHumanReadable(AtmosphericThrustersMaxAcceleration);
-
-    pushStat("Atmospheric thrusters acceleration", AtmosphericThrustersMaxAcceleration +" m/s");
-
-}
-
 function calcTotalHydrogenStorage(gridSize, playerCount){
 
     playerItemHydrogenBottleAmount    = $('#playerItemHydrogenBottle').val();
@@ -371,35 +291,6 @@ function calcTotalHydrogenConsumption(gridSize){
 
 }
 
-function calcHydrogenTotalThrust(gridSize){
-
-    var totalHydrogenThurst = 0;
-
-    if(gridSize == "player"){
-
-        // totalHydrogenThurst = gameInfo.grids.player.???; // Cant find the suit thrust.
-
-    }
-
-    if(gridSize == "small" || gridSize == "large"){
-
-        var largeHydrogenThrusterThrust = gameInfo.grids[gridSize].largeHydrogenThruster.maximumThrust;
-        var largeHydrogenThrusterAmount = $('#largeHydrogenThrusterAmount').val();
-
-        var smallHydrogenThrusterThrust = gameInfo.grids[gridSize].smallHydrogenThruster.maximumThrust;
-        var smallHydrogenThrusterAmount = $('#smallHydrogenThrusterAmount').val();
-
-        totalHydrogenThurst = largeHydrogenThrusterThrust * largeHydrogenThrusterAmount;
-        totalHydrogenThurst += smallHydrogenThrusterThrust * smallHydrogenThrusterAmount;
-
-    }
-
-    pushStat("Hydrogen Thrust", totalHydrogenThurst +" kN");
-
-    return totalHydrogenThurst;
-
-}
-
 function calcHydrogenStorageDrain(totalHydrogenStorage, totalHydrogenConsumption){
 
     if(totalHydrogenConsumption <= 0){
@@ -418,109 +309,7 @@ function calcHydrogenStorageDrain(totalHydrogenStorage, totalHydrogenConsumption
 
 }
 
-function calcHydrogenThrustersMaxLift(gridSize, totalHydrogenThrust){
 
-    var hydrogenThrustersMaxLift = 0;
-
-    if(gridSize == "player"){
-
-        return false;
-
-    }
-
-    // hydrogenThrustersMaxLift = engine force [N] * effectivity [unitless] / acceleration due to gravity [m/s²];
-    hydrogenThrustersMaxLift = ((totalHydrogenThrust * 1000) * 1.0) / 9.81;
-
-    hydrogenThrustersMaxLift = Math.floor(hydrogenThrustersMaxLift);
-
-    pushStat("Hydrogen thrusters max lift", hydrogenThrustersMaxLift +" kg");
-
-    return hydrogenThrustersMaxLift;
-
-    // Source and info:
-    //http://www.spaceengineerswiki.com/Thruster#Effectiveness_In_Natural_Gravity
-
-}
-
-function calcHydrogenThrustersMaxAcceleration(gridSize, totalHydrogenThrust, shipWeight){
-
-    var HydrogenThrustersMaxAcceleration = 0;
-
-    if(gridSize == "player"){
-
-        return false;
-
-    }
-
-    HydrogenThrustersMaxAcceleration = ((totalHydrogenThrust * 1000) * 1.0) / shipWeight;
-    HydrogenThrustersMaxAcceleration = formatAccelerationToHumanReadable(HydrogenThrustersMaxAcceleration);
-
-    pushStat("Hydrogen thrusters acceleration", HydrogenThrustersMaxAcceleration +" m/s");
-
-}
-
-function calcIonTotalThrust(gridSize){
-
-    var totalIonThurst = 0;
-
-    if(gridSize == "player"){
-
-        // totalIonThurst = gameInfo.grids.player.???; // Cant find the suit thrust.
-
-    }
-
-    if(gridSize == "small" || gridSize == "large"){
-
-        var largeIonThrusterThrust = gameInfo.grids[gridSize].largeIonThruster.maximumThrust;
-        var largeIonThrusterAmount = $('#largeIonThrusterAmount').val();
-
-        var smallIonThrusterThrust = gameInfo.grids[gridSize].smallIonThruster.maximumThrust;
-        var smallIonThrusterAmount = $('#smallIonThrusterAmount').val();
-
-        totalIonThurst = largeIonThrusterThrust * largeIonThrusterAmount;
-        totalIonThurst += smallIonThrusterThrust * smallIonThrusterAmount;
-
-    }
-
-    pushStat("Ion Thrust", totalIonThurst +" kN");
-
-    return totalIonThurst;
-
-}
-
-function calcIonThrustersMaxAcceleration(gridSize, totalIonThrust, shipWeight){
-
-    var IonThrustersMaxAcceleration = 0;
-
-    if(gridSize == "player"){
-
-        return false;
-
-    }
-
-    IonThrustersMaxAcceleration = ((totalIonThrust * 1000) * 1.0) / shipWeight;
-    IonThrustersMaxAcceleration = formatAccelerationToHumanReadable(IonThrustersMaxAcceleration);
-
-    pushStat("Ion thrusters acceleration", IonThrustersMaxAcceleration +" m/s");
-
-}
-
-function calcGroundToSpaceTravelTime(planet){
-
-    console.log("Planet "+ planet);
-
-    var maxGravitationalPullAltitude = gameInfo.planets[planet].maxGravitationalPullAltitude;
-    maxGravitationalPullAltitude += 2000; // To be sure!
-
-    var maxTravelSpeed = 100;
-
-    var timeToReachMaxGrav = maxGravitationalPullAltitude / maxTravelSpeed;
-
-    formattedTimed = formatSecondsToHumanReadable(timeToReachMaxGrav);
-
-    pushStat("Time to reach space (at full speed)", formattedTimed);
-
-}
 
 function calcThrusterTypeTotalThrust(gridSize, thrusterType){
 
@@ -618,6 +407,23 @@ function canThrustersLiftShip(shipWeight, thrustersMaxLift, thrusterType){
         pushStat(thrusterType +" thruster lift", "Not enough lift.", "red");
 
     }
+
+}
+
+function calcGroundToSpaceTravelTime(planet){
+
+    console.log("Planet "+ planet);
+
+    var maxGravitationalPullAltitude = gameInfo.planets[planet].maxGravitationalPullAltitude;
+    maxGravitationalPullAltitude += 2000; // To be sure!
+
+    var maxTravelSpeed = 100;
+
+    var timeToReachMaxGrav = maxGravitationalPullAltitude / maxTravelSpeed;
+
+    formattedTimed = formatSecondsToHumanReadable(timeToReachMaxGrav);
+
+    pushStat("Time to reach space (at full speed)", formattedTimed);
 
 }
 
