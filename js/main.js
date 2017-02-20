@@ -69,7 +69,8 @@ function handleCalculations(){
     var playersConsumeSameAir   = playersConsumeSameAir = document.getElementById('playersConsumeSameAir').checked;
     var playerOxygenConsumption = gameInfo.grids.player.oxygenConsumption;
 
-    var totalOxygenStorage      = calcTotalOxygenStorage(gridSize, playerCount);
+    // var totalOxygenStorage      = calcTotalOxygenStorage(gridSize, playerCount);
+    var totalOxygenStorage      = calcTotalStorageType(gridSize, playerCount, "Oxygen", "o2")
     var totalOxygenConsumption  = calcTotalOxygenConsumption(playerCount, playerOxygenConsumption);
     var totalOxygenProduction   = calcTotalOxygenProduction(gridSize);
 
@@ -89,7 +90,8 @@ function handleCalculations(){
 
     pushStat("&nbsp; ", false);
 
-    var totalHydrogenStorage        = calcTotalHydrogenStorage(gridSize, playerCount);
+    // var totalHydrogenStorage        = calcTotalHydrogenStorage(gridSize, playerCount);
+    var totalHydrogenStorage        = calcTotalStorageType(gridSize, playerCount, "Hydrogen", "H")
     var totalHydrogenConsumption    = calcTotalHydrogenConsumption(gridSize);
     var totalHydrogenThrust         = calcThrusterTypeTotalThrust(gridSize, "Hydrogen");
 
@@ -309,7 +311,49 @@ function calcHydrogenStorageDrain(totalHydrogenStorage, totalHydrogenConsumption
 
 }
 
+function calcTotalStorageType(gridSize, playerCount, storageType, suffix){
 
+    var bottleType  = storageType.toLowerCase() +'Bottle';
+    var tankType    = storageType.toLowerCase() +'Tank';
+
+    var playerItemBottleAmount    = $('#playerItem'+ storageType +'Bottle').val();
+    var playerItemBottleStorage   = gameInfo.grids.player[bottleType].storage;
+
+    var totalStorage = 0;
+
+    totalStorage = (playerItemBottleStorage * playerItemBottleAmount); // Oxygen bottles are for all grids.
+
+    if(gridSize == "player"){
+
+        var internalSuitStorage = gameInfo.grids.player[tankType].storage;
+
+        totalStorage += internalSuitStorage * playerCount;
+
+    }
+
+    if(gridSize == "small" || gridSize == "large"){
+
+        var tankAmount  = $('#'+ tankType +'Amount').val();
+        var tankStorage = gameInfo.grids[gridSize][tankType].storage;
+        totalStorage    += tankStorage * tankAmount;
+
+    }
+
+    if(totalStorage <= 0){
+
+        totalStorage = 0;
+
+        pushStat(storageType +" storage", "No storage to drain.", "orange");
+
+        return totalStorage;
+
+    }
+
+    pushStat(storageType +" storage", totalStorage +" "+ suffix);
+
+    return totalStorage;
+
+}
 
 function calcThrusterTypeTotalThrust(gridSize, thrusterType){
 
@@ -412,8 +456,6 @@ function canThrustersLiftShip(shipWeight, thrustersMaxLift, thrusterType){
 
 function calcGroundToSpaceTravelTime(planet){
 
-    console.log("Planet "+ planet);
-
     var maxGravitationalPullAltitude = gameInfo.planets[planet].maxGravitationalPullAltitude;
     maxGravitationalPullAltitude += 2000; // To be sure!
 
@@ -507,26 +549,4 @@ function formatSecondsToHumanReadable ( seconds ) {
         returntext += ' ' + levels[i][0] + ' ' + (levels[i][0] === 1 ? levels[i][1].substr(0, levels[i][1].length-1): levels[i][1]);
     };
     return returntext.trim();
-}
-
-/*-------------------------------------------- Input checks ---------------------------------------------------
-* One of many functions of this type.
-* These check if all the required fields are filled in for the calculation to be made.
-* If not abort this opperation.
-*/
-
-//@TODO Fix a decent check that allows for open ended stuff. So only check required?
-function oxygenStatsReady(){
-    if(
-        !$('#playerCountOxygenConsumption').val() ||
-        !$('#largeGridOxygenTank').val() ||
-        !$('#smallGridOxygenTank').val() ||
-        !$('#playerItemOxygenBottle').val()
-    ){
-
-        return false;
-    }
-
-    return true;
-
 }
