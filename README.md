@@ -21,6 +21,8 @@ Incorporate planet stuff.
 Saving of stats, via GET par?
 Inventory max weight?
 Inventory multipliers/settings
+Index.html div Id's all lowercase.
+calculate storage to shipweight ratio?
 
 
 

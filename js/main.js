@@ -30,8 +30,8 @@ function handleGridSwitch(gridSize){
 
     if(gridSize == "large"){
         // Disable smallOnly and playerOnly
-        $('.smallGridOnly').prop("disabled", true);
-        $('.playerGridOnly').prop("disabled", true);
+        $('.playerGrid').prop("disabled", true);
+        $('.smallGrid').prop("disabled", true);
 
         // Enable largeGrids.
         $('.largeGrid').prop("disabled", false);
@@ -66,8 +66,18 @@ function handleCalculations(){
     var planet                  = $('input[name="planetRadios"]:checked').val();
 
     // Oxygen vars
-    var playersConsumeSameAir   = playersConsumeSameAir = document.getElementById('playersConsumeSameAir').checked;
+    var playersConsumeSameAir = document.getElementById('playersConsumeSameAir').checked;
     var playerOxygenConsumption = gameInfo.grids.player.oxygenConsumption;
+
+    // Storage vars
+    var includeStorageInLift = document.getElementById('includeStorageInLift').checked;
+    var totalCargoStorage = calcTotalCargoStorageLiters(gridSize);
+    var totalCargoWeight = calcTotalCargoWeight(totalCargoStorage);
+
+    // Specific cargo storage functions.
+    shipWeight = calcTotalShipWeight(includeStorageInLift, shipWeight, totalCargoWeight);
+
+    pushStat("&nbsp; ", false);
 
     // var totalOxygenStorage      = calcTotalOxygenStorage(gridSize, playerCount);
     var totalOxygenStorage      = calcTotalStorageType(gridSize, playerCount, "Oxygen", "o2")
@@ -467,6 +477,59 @@ function calcGroundToSpaceTravelTime(planet){
 
     pushStat("Time to reach space (at full speed)", formattedTimed);
 
+}
+
+function calcTotalCargoStorageLiters(gridSize){
+
+    var largeCargoContainers    = $('#largeCargoContainerAmount').val();
+    var mediumCargoContainers   = $('#mediumCargoContainerAmount').val();
+    var smallCargoContainers    = $('#smallCargoContainerAmount').val();
+    var connectors              = $('#connectorAmount').val();
+    var inventoryModifier       = $('#gameInventoryModifier').val();
+
+    var largeCargoContainerMaxStorage   = gameInfo.grids[gridSize].largeCargoContainer.storageCapacity;
+    var mediumCargoContainerMaxStorage  = gameInfo.grids[gridSize].largeCargoContainer.storageCapacity; // For simplicities sake I added this without a check. Its only available on small grid, but its set to 0 on the large grid.
+    var smallCargoContainerMaxStorage   = gameInfo.grids[gridSize].largeCargoContainer.storageCapacity;
+    var connectorsMaxStorage            = gameInfo.grids[gridSize].connector.storageCapacity;
+
+    var totalCargoStorage   = largeCargoContainerMaxStorage * largeCargoContainers;
+    totalCargoStorage       += mediumCargoContainerMaxStorage * mediumCargoContainers;
+    totalCargoStorage       += smallCargoContainerMaxStorage * smallCargoContainers;
+    totalCargoStorage       += connectorsMaxStorage * connectors;
+
+    totalCargoStorage = totalCargoStorage * inventoryModifier;
+
+    pushStat("Max storage capacity", totalCargoStorage +" L");
+
+    return totalCargoStorage;
+
+}
+
+function calcTotalCargoWeight(totalCargoStorage){
+
+    var densestMaterialVolumePerKg = gameInfo.materials.platinum.volume;
+
+    var totalCargoWeight = totalCargoStorage / densestMaterialVolumePerKg;
+
+    totalCargoWeight = Math.floor(totalCargoWeight);
+
+    pushStat("Max storage weight", totalCargoWeight +" kg");
+
+    return totalCargoWeight;
+
+}
+
+function calcTotalShipWeight(includeStorageInLift, shipWeight, totalCargoWeight){
+
+    if(includeStorageInLift){
+
+        shipWeight = parseInt(totalCargoWeight) + parseInt(shipWeight);
+
+    }
+
+    pushStat("Ship total mass", shipWeight +" kg");
+
+    return shipWeight
 }
 
 /*--------------------------------------------Utility ---------------------------------------------------

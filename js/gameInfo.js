@@ -47,6 +47,18 @@ var gameInfo = {
                 "consumption": 0,
                 "consumptionType": "power",
                 "maximumThrust": 288
+            },
+            "smallCargoContainer":{
+                "storageCapacity": 15625
+            },
+            "mediumCargoContainer":{
+                "storageCapacity": 0
+            },
+            "largeCargoContainer":{
+                "storageCapacity": 421875
+            },
+            "connector":{
+                "storageCapacity": 8000
             }
         },
         "small": {
@@ -89,6 +101,18 @@ var gameInfo = {
                 "consumption": 0,
                 "consumptionType": "power",
                 "maximumThrust": 12
+            },
+            "smallCargoContainer":{
+                "storageCapacity": 125
+            },
+            "mediumCargoContainer":{
+                "storageCapacity": 3375
+            },
+            "largeCargoContainer":{
+                "storageCapacity": 15625
+            },
+            "connector":{
+                "storageCapacity": 1152
             }
         },
         "player": {
@@ -139,5 +163,17 @@ var gameInfo = {
             "maxGravitationalPullAltitude": 3000,
             "maxAtmosphereAltitude": 7000
         },
+    },
+    "ores":{
+
+    },
+    "components":{
+
+    },
+    "materials":{
+        "platinum":{
+            "volume": 0.047,
+            "mass": 1
+        }
     }
 };
