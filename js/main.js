@@ -488,8 +488,8 @@ function calcTotalCargoStorageLiters(gridSize){
     var inventoryModifier       = $('#gameInventoryModifier').val();
 
     var largeCargoContainerMaxStorage   = gameInfo.grids[gridSize].largeCargoContainer.storageCapacity;
-    var mediumCargoContainerMaxStorage  = gameInfo.grids[gridSize].largeCargoContainer.storageCapacity; // For simplicities sake I added this without a check. Its only available on small grid, but its set to 0 on the large grid.
-    var smallCargoContainerMaxStorage   = gameInfo.grids[gridSize].largeCargoContainer.storageCapacity;
+    var mediumCargoContainerMaxStorage  = gameInfo.grids[gridSize].mediumCargoContainer.storageCapacity; // For simplicities sake I added this without a check. Its only available on small grid, but its set to 0 on the large grid.
+    var smallCargoContainerMaxStorage   = gameInfo.grids[gridSize].smallCargoContainer.storageCapacity;
     var connectorsMaxStorage            = gameInfo.grids[gridSize].connector.storageCapacity;
 
     var totalCargoStorage   = largeCargoContainerMaxStorage * largeCargoContainers;
